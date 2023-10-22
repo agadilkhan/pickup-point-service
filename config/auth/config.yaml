@@ -1,0 +1,23 @@
+Auth:
+  JWTSecretKey:
+  PasswordSecretKey:
+HttpServer:
+  Port: 9233
+  ShutdownTimeout: 2s
+Database:
+  Main:
+    Host: '127.0.0.1'
+    Port: '3306'
+    User: 'postgres'
+    Password:
+    Name: 'Auth'
+  Replica:
+    Host: '127.0.0.1'
+    Port: '3306'
+    User: 'postgres'
+    Password:
+    Name: 'Auth'
+Transport:
+  User:
+    Host: http://127.0.0.1:9235
+    Timeout: 5s
