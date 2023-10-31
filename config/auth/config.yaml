@@ -6,17 +6,17 @@ HttpServer:
   ShutdownTimeout: 2s
 Database:
   Main:
-    Host: '127.0.0.1'
-    Port: '3306'
+    Host: 'localhost'
+    Port: '5432'
     User: 'postgres'
     Password:
-    Name: 'Auth'
+    Name: 'auth'
   Replica:
-    Host: '127.0.0.1'
-    Port: '3306'
+    Host: 'localhost'
+    Port: '5432'
     User: 'postgres'
     Password:
-    Name: 'Auth'
+    Name: 'auth'
 Transport:
   User:
     Host: http://127.0.0.1:9235
