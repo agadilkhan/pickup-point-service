@@ -63,7 +63,7 @@ func (app *Applicator) Run() {
 
 	authService := auth.NewAuthService(repo, cfg.Auth, userTransport)
 
-	endPointHandler := http.NewEndpointHandler(authService, l)
+	endPointHandler := http.NewEndpointHandler(authService, l, cfg.PasswordSecretKey)
 
 	router := http.NewRouter(l)
 	httpConfig := cfg.HttpServer
