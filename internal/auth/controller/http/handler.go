@@ -4,23 +4,71 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 type EndpointHandler struct {
-	authService auth.UseCase
-	logger      *zap.SugaredLogger
+	authService       auth.UseCase
+	logger            *zap.SugaredLogger
+	passwordSecretKey string
 }
 
 func NewEndpointHandler(
 	authService auth.UseCase,
 	logger *zap.SugaredLogger,
+	passwordSecretKey string,
 ) *EndpointHandler {
 	return &EndpointHandler{
-		authService: authService,
-		logger:      logger,
+		authService:       authService,
+		logger:            logger,
+		passwordSecretKey: passwordSecretKey,
 	}
 }
 
 func (h *EndpointHandler) Login(ctx *gin.Context) {
+	logger := h.logger.With(
+		zap.String("endpoint", "login"),
+		zap.String("params", ctx.FullPath()),
+	)
+
+	request := struct {
+		Login    string `json:"login"`
+		Password string `json:"password"`
+	}{}
+
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		logger.Errorf("failed to unmarshal body err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	tokenRequest := auth.GenerateTokenRequest{
+		Login:    request.Login,
+		Password: request.Password,
+	}
+
+	userToken, err := h.authService.GenerateToken(ctx, tokenRequest)
+	if err != nil {
+		logger.Errorf("failed to GenerateToken err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	response := struct {
+		Token        string `json:"token"`
+		RefreshToken string `json:"refresh_token"`
+	}{
+		Token:        userToken.Token,
+		RefreshToken: userToken.RefreshToken,
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (h *EndpointHandler) Register(ctx *gin.Context) {
+
+}
+
+func (h *EndpointHandler) RenewToken(ctx *gin.Context) {
 
 }

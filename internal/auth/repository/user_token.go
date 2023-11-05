@@ -29,5 +29,14 @@ func (r *Repo) CreateUserToken(ctx context.Context, userToken entity.UserToken) 
 }
 
 func (r *Repo) UpdateUserToken(ctx context.Context, userToken entity.UserToken) error {
+	res := r.main.DB.Model(&userToken).WithContext(ctx).Updates(entity.UserToken{
+		Token:        userToken.Token,
+		RefreshToken: userToken.RefreshToken,
+	})
+
+	if res.Error != nil {
+		return fmt.Errorf("failed to update user token err: %v", res.Error)
+	}
+
 	return nil
 }

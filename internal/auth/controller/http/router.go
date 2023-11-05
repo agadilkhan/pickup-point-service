@@ -21,7 +21,9 @@ func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 
 	auth := rt.Group("/api/auth/v1/")
 	{
+		auth.POST("/register", eh.Register)
 		auth.POST("/login", eh.Login)
+		auth.POST("/renew_token", eh.RenewToken)
 	}
 
 	return rt

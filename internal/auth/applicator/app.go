@@ -73,6 +73,7 @@ func (app *Applicator) Run() {
 	}
 
 	server.Run()
+
 	defer func() {
 		if err := server.Stop(); err != nil {
 			l.Panicf("failed close server err: %v", err)
