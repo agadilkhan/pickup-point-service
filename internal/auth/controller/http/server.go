@@ -16,7 +16,7 @@ type routerHandler interface {
 
 type server struct {
 	logger          *zap.SugaredLogger
-	shutDownTimeout time.Duration
+	shutdownTimeout time.Duration
 	client          *http.Server
 	listener        net.Listener
 	isReady         bool
@@ -26,7 +26,7 @@ type server struct {
 
 func NewServer(
 	port int,
-	shutDownTimeout time.Duration,
+	shutdownTimeout time.Duration,
 	routerHandler routerHandler,
 	logger *zap.SugaredLogger,
 	endpointHandler *EndpointHandler,
@@ -42,7 +42,7 @@ func NewServer(
 		},
 		listener:        listener,
 		logger:          logger,
-		shutDownTimeout: shutDownTimeout,
+		shutdownTimeout: shutdownTimeout,
 		isReady:         false,
 	}, nil
 }
@@ -59,7 +59,7 @@ func (s *server) Stop() error {
 	s.isReady = false
 	s.logger.Infof("[%s] HTTP server is stopping...", s.listener.Addr().String())
 
-	ctx, cancel := context.WithTimeout(context.Background(), s.shutDownTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), s.shutdownTimeout)
 	defer cancel()
 
 	s.client.SetKeepAlivesEnabled(false)

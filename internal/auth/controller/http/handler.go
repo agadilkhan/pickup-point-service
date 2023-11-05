@@ -8,20 +8,17 @@ import (
 )
 
 type EndpointHandler struct {
-	authService       auth.UseCase
-	logger            *zap.SugaredLogger
-	passwordSecretKey string
+	authService auth.UseCase
+	logger      *zap.SugaredLogger
 }
 
 func NewEndpointHandler(
 	authService auth.UseCase,
 	logger *zap.SugaredLogger,
-	passwordSecretKey string,
 ) *EndpointHandler {
 	return &EndpointHandler{
-		authService:       authService,
-		logger:            logger,
-		passwordSecretKey: passwordSecretKey,
+		authService: authService,
+		logger:      logger,
 	}
 }
 

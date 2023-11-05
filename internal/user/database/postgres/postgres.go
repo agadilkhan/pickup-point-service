@@ -34,7 +34,7 @@ func New(cfg config.DBNode) (*Db, error) {
 	return &Db{DB: db}, nil
 }
 
-func Close(d *Db) error {
+func (d *Db) Close() error {
 	db, err := d.DB.DB()
 	if err != nil {
 		return fmt.Errorf("failed to returning *sql.DB err: %v", err)

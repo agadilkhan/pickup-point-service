@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/applicator"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	"github.com/spf13/viper"
@@ -32,12 +33,12 @@ func loadConfig(path string) (config config.Config, err error) {
 
 	err = viper.ReadInConfig()
 	if err != nil {
-		return config, err
+		return config, fmt.Errorf("failed to ReadInConfig err: %v", err)
 	}
 
 	err = viper.Unmarshal(&config)
 	if err != nil {
-		return config, err
+		return config, fmt.Errorf("failed to Unmarshal config err: %v", err)
 	}
 
 	config.Database.Main.Password = dbPass

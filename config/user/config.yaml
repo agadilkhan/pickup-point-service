@@ -1,6 +1,6 @@
 HttpServer:
   Port: 9235
-  ShutdownTimeout: 2m
+  ShutdownTimeout: 2s
 Database:
   Main:
     Host: '127.0.0.1'
