@@ -41,7 +41,9 @@ func (app *Applicator) Run() {
 	}
 
 	defer func() {
-		mainDB.Close()
+		if err := mainDB.Close(); err != nil {
+			l.Panicf("failed to close MainDB err: %v", err)
+		}
 		l.Infof("mainDB closed")
 	}()
 
@@ -51,7 +53,9 @@ func (app *Applicator) Run() {
 	}
 
 	defer func() {
-		replicaDB.Close()
+		if err := replicaDB.Close(); err != nil {
+			l.Panicf("failed to close ReplicaDB err: %v", err)
+		}
 		l.Infof("replicaDB closed")
 	}()
 

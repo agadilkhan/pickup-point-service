@@ -5,7 +5,6 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 )
 
 type Db struct {
@@ -29,17 +28,17 @@ func New(cfg config.DBNode) (*Db, error) {
 
 	db, err := gorm.Open(postgres.Open(conf.dsn()), &gorm.Config{})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("connection open err: %v", err)
 	}
 
 	return &Db{DB: db}, nil
 }
 
-func (d *Db) Close() {
+func (d *Db) Close() error {
 	db, err := d.DB.DB()
 	if err != nil {
-		log.Printf("error closing database: %s", err)
+		return fmt.Errorf("failed to returning *sql.DB err: %v", err)
 	}
 
-	db.Close()
+	return db.Close()
 }
