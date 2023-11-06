@@ -58,8 +58,14 @@ func (app *Applicator) Run() {
 		l.Infof("ReplicaDB closed")
 	}()
 
+	l.Infof("database connection success")
+
 	repo := repository.NewRepository(mainDB, replicaDB)
 	_ = repo
+
+	if err != nil {
+		l.Panicf("AutoMigrate err: %v", err)
+	}
 
 	userService := user.NewService(repo)
 

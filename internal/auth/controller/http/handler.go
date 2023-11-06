@@ -63,7 +63,35 @@ func (h *EndpointHandler) Login(ctx *gin.Context) {
 }
 
 func (h *EndpointHandler) Register(ctx *gin.Context) {
+	logger := h.logger.With(
+		zap.String("endpoint", "register"),
+		zap.String("params", ctx.FullPath()),
+	)
 
+	request := struct {
+		Login    string `json:"login"`
+		Password string `json:"password"`
+	}{}
+
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		logger.Errorf("failed to Unmarshal err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	createUserRequest := auth.CreateUserRequest{
+		Login:    request.Login,
+		Password: request.Password,
+	}
+
+	userID, err := h.authService.Register(ctx, createUserRequest)
+	if err != nil {
+		logger.Errorf("Register request err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, userID)
 }
 
 func (h *EndpointHandler) RenewToken(ctx *gin.Context) {

@@ -23,3 +23,19 @@ func (s *Service) GetUserByLogin(ctx context.Context, login string) (*entity.Use
 
 	return user, nil
 }
+
+func (s *Service) CreateUser(ctx context.Context, request CreateUserRequest) (int, error) {
+	user := entity.User{
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
+		Login:     request.Login,
+		Password:  request.Password,
+	}
+
+	userID, err := s.repo.CreateUser(ctx, &user)
+	if err != nil {
+		return 0, fmt.Errorf("CreateUser request err: %v", err)
+	}
+
+	return userID, nil
+}

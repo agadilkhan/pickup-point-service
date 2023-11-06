@@ -21,7 +21,8 @@ func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 
 	user := rt.Group("/api/user/v1")
 	{
-		user.POST("/user/:login", eh.GetUserByLogin)
+		user.POST("/user/create", eh.CreateUser)
+		user.GET("/user/:login", eh.GetUserByLogin)
 	}
 
 	return rt

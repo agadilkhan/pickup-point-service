@@ -167,8 +167,20 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	return jwtToken, nil
 }
 
-func (s *Service) Register(ctx context.Context) (int, error) {
-	return 0, nil
+func (s *Service) Register(ctx context.Context, request CreateUserRequest) (int, error) {
+	request.Password = s.generatePassword(request.Password)
+
+	createUserRequest := transport.CreateUserRequest{
+		Login:    request.Login,
+		Password: request.Password,
+	}
+
+	userID, err := s.userTransport.CreateUser(ctx, createUserRequest)
+	if err != nil {
+		return 0, fmt.Errorf("CreateUser request err: %v", err)
+	}
+
+	return userID, nil
 }
 
 func (s *Service) generatePassword(password string) string {

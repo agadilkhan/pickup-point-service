@@ -37,6 +37,6 @@ type Transport struct {
 }
 
 type UserTransport struct {
-	Host            string        `yaml:"Host"`
-	ShutdownTimeout time.Duration `yaml:"ShutdownTimeout"`
+	Host    string        `yaml:"Host"`
+	Timeout time.Duration `yaml:"Timeout"`
 }

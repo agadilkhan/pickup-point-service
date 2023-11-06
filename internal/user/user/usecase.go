@@ -7,4 +7,5 @@ import (
 
 type UseCase interface {
 	GetUserByLogin(ctx context.Context, login string) (*entity.User, error)
+	CreateUser(ctx context.Context, request CreateUserRequest) (int, error)
 }

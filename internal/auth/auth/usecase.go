@@ -8,6 +8,6 @@ import (
 type UseCase interface {
 	GenerateToken(ctx context.Context, request GenerateTokenRequest) (*JWTUserToken, error)
 	RenewToken(ctx context.Context, refreshToken string) (*JWTUserToken, error)
-	Register(ctx context.Context) (int, error)
+	Register(ctx context.Context, request CreateUserRequest) (int, error)
 	ValidateToken(tokenString string) (jwt.MapClaims, error)
 }

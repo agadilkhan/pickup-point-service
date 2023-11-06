@@ -16,3 +16,8 @@ type JWTTokenContent struct {
 	FirstName string
 	LastName  string
 }
+
+type CreateUserRequest struct {
+	Login    string
+	Password string
+}

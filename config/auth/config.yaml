@@ -20,4 +20,4 @@ Database:
 Transport:
   User:
     Host: http://127.0.0.1:9235
-    Timeout: 5s
+    Timeout: 10s
