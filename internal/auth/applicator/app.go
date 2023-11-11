@@ -44,7 +44,7 @@ func (app *Applicator) Run() {
 		if err := mainDB.Close(); err != nil {
 			l.Panicf("failed to close MainDB err: %v", err)
 		}
-		l.Infof("mainDB closed")
+		l.Info("mainDB closed")
 	}()
 
 	replicaDB, err := postgres.New(cfg.Database.Replica)
@@ -56,10 +56,10 @@ func (app *Applicator) Run() {
 		if err := replicaDB.Close(); err != nil {
 			l.Panicf("failed to close ReplicaDB err: %v", err)
 		}
-		l.Infof("replicaDB closed")
+		l.Info("replicaDB closed")
 	}()
 
-	l.Infof("db connection success")
+	l.Info("db connection success")
 
 	repo := repository.NewRepository(mainDB, replicaDB)
 
@@ -81,7 +81,7 @@ func (app *Applicator) Run() {
 
 	defer func() {
 		if err := server.Stop(); err != nil {
-			l.Panicf("failed close server err: %v", err)
+			l.Panicf("failed to close server err: %v", err)
 		}
 		l.Info("server closed")
 	}()
