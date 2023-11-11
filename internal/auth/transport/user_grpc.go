@@ -45,6 +45,7 @@ func (t *UserGrpcTransport) GetUserByLogin(ctx context.Context, login string) (*
 func (t *UserGrpcTransport) CreateUser(ctx context.Context, request dto.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	resp, err := t.client.CreateUser(ctx, &pb.CreateUserRequest{
 		Request: &pb.User{
+			RoleId:    int64(request.RoleID),
 			FirstName: request.FirstName,
 			LastName:  request.LastName,
 			Email:     request.Email,

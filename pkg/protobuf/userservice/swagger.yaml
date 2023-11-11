@@ -7,10 +7,10 @@ openapiOptions:
           version: "1.0"
           contact:
             name: "userservice"
-            url: "https://github.com/agadilkhan"
-            email: "aagadilkhan@gmail.com"
+            url: "https://github.com/notfound"
+            email: "youremail@gmail.com"
         external_docs:
-          url: "https://github.com/agadilkhan"
+          url: "https://github.com/notfound"
           description: "Сервис для работы с данными юзера"
         schemes:
           - HTTPS

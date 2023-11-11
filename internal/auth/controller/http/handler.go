@@ -70,6 +70,7 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 	)
 
 	request := struct {
+		RoleID    int    `json:"role_id"`
 		FirstName string `json:"first_name"`
 		LastName  string `json:"last_name"`
 		Email     string `json:"email"`
@@ -85,6 +86,7 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 	}
 
 	createUserRequest := dto.CreateUserRequest{
+		RoleID:    request.RoleID,
 		FirstName: request.FirstName,
 		LastName:  request.LastName,
 		Email:     request.Email,

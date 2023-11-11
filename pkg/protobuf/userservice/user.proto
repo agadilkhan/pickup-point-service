@@ -54,10 +54,11 @@ message GetUserByLoginResponse {
 
 message User {
   int64 id = 1;
-  string first_name = 2;
-  string last_name = 3;
-  string email = 4;
-  string phone = 5;
-  string login = 6;
-  string password = 7;
+  int64 role_id = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string email = 5;
+  string phone = 6;
+  string login = 7;
+  string password = 8;
 }

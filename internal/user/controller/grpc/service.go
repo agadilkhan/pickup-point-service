@@ -34,6 +34,7 @@ func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLogin
 	return &pb.GetUserByLoginResponse{
 		Result: &pb.User{
 			Id:        int64(user.ID),
+			RoleId:    int64(user.RoleID),
 			FirstName: user.FirstName,
 			LastName:  user.LastName,
 			Email:     user.Email,
@@ -46,6 +47,7 @@ func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLogin
 
 func (s *Service) CreateUser(ctx context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	user := entity.User{
+		RoleID:    int(request.Request.RoleId),
 		FirstName: request.Request.FirstName,
 		LastName:  request.Request.LastName,
 		Email:     request.Request.Email,
