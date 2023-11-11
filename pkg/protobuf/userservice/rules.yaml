@@ -1,0 +1,8 @@
+type: google.api.Service
+config_version: 3
+
+http:
+  rules:
+    - selector: userservice.UserService.GetUserByLogin
+      post: "/grpc/v1/getUserByLogin"
+      body: "*"

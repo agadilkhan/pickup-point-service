@@ -1,6 +1,8 @@
 HttpServer:
   Port: 9235
   ShutdownTimeout: 2s
+GrpcServer:
+  Port: ":9090"
 Database:
   Main:
     Host: '127.0.0.1'

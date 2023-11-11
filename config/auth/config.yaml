@@ -21,3 +21,5 @@ Transport:
   User:
     Host: http://127.0.0.1:9235
     Timeout: 10s
+  UserGrpc:
+    Host: localhost:9090

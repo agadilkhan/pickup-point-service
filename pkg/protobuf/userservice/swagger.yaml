@@ -1,0 +1,21 @@
+openapiOptions:
+  file:
+    - file: "user.proto"
+      option:
+        info:
+          title: "Сервис для работы с данными юзера"
+          version: "1.0"
+          contact:
+            name: "userservice"
+            url: "https://github.com/agadilkhan"
+            email: "aagadilkhan@gmail.com"
+        external_docs:
+          url: "https://github.com/agadilkhan"
+          description: "Сервис для работы с данными юзера"
+        schemes:
+          - HTTPS
+          - HTTP
+        consumes:
+          - "application/json"
+        produces:
+          - "application/json"

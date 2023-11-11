@@ -64,8 +64,9 @@ func (app *Applicator) Run() {
 	repo := repository.NewRepository(mainDB, replicaDB)
 
 	userTransport := transport.NewUserTransport(cfg.User)
+	userGrpcTransport := transport.NewUserGrpcTransport(cfg.UserGrpc)
 
-	authService := auth.NewAuthService(repo, cfg.Auth, userTransport)
+	authService := auth.NewAuthService(repo, cfg.Auth, userTransport, userGrpcTransport)
 
 	endPointHandler := http.NewEndpointHandler(authService, l)
 

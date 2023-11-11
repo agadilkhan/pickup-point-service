@@ -3,6 +3,7 @@ package applicator
 import (
 	"context"
 	"github.com/agadilkhan/pickup-point-service/internal/user/config"
+	"github.com/agadilkhan/pickup-point-service/internal/user/controller/grpc"
 	"github.com/agadilkhan/pickup-point-service/internal/user/controller/http"
 	"github.com/agadilkhan/pickup-point-service/internal/user/database/postgres"
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
@@ -63,10 +64,6 @@ func (app *Applicator) Run() {
 	repo := repository.NewRepository(mainDB, replicaDB)
 	_ = repo
 
-	if err != nil {
-		l.Panicf("AutoMigrate err: %v", err)
-	}
-
 	userService := user.NewService(repo)
 
 	endpointHandler := http.NewEndpointHandler(userService, l)
@@ -78,13 +75,22 @@ func (app *Applicator) Run() {
 		l.Panicf("failed to create server err: %v", err)
 	}
 
+	grpcService := grpc.NewService(l, repo)
+	grpcServer := grpc.NewServer(cfg.GrpcServer.Port, grpcService)
+	err = grpcServer.Start()
+	if err != nil {
+		l.Panicf("failed to start grpc server err: %v", err)
+	}
+
+	defer grpcServer.Close()
+
 	server.Run()
 
 	defer func() {
 		if err := server.Stop(); err != nil {
 			l.Panicf("failed close server err: %v", err)
 		}
-		l.Infof("server closed")
+		l.Info("server closed")
 	}()
 
 	app.gracefulShutdown(cancel)

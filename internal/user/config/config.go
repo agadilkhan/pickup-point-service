@@ -4,12 +4,17 @@ import "time"
 
 type Config struct {
 	HttpServer `yaml:"HttpServer"`
+	GrpcServer `yaml:"GrpcServer"`
 	Database   `yaml:"Database"`
 }
 
 type HttpServer struct {
 	Port            int           `yaml:"Port"`
 	ShutdownTimeout time.Duration `yaml:"ShutdownTimeout"`
+}
+
+type GrpcServer struct {
+	Port string `ymal:"Port"`
 }
 
 type Database struct {

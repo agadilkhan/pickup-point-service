@@ -33,7 +33,12 @@ type Auth struct {
 }
 
 type Transport struct {
-	User UserTransport `yaml:"User"`
+	User     UserTransport     `yaml:"User"`
+	UserGrpc UserGrpcTransport `yaml:"UserGrpc"`
+}
+
+type UserGrpcTransport struct {
+	Host string `yaml:"host"`
 }
 
 type UserTransport struct {

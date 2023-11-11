@@ -18,26 +18,31 @@ type Service struct {
 	jwtSecretKey      string
 	passwordSecretKey string
 	userTransport     *transport.UserTransport
+	userGrpcTransport *transport.UserGrpcTransport
 }
 
 func NewAuthService(
 	repo repository.Repository,
 	authConfig config.Auth,
 	userTransport *transport.UserTransport,
+	userGrpcTransport *transport.UserGrpcTransport,
 ) UseCase {
 	return &Service{
 		repo:              repo,
 		jwtSecretKey:      authConfig.JWTSecretKey,
 		passwordSecretKey: authConfig.PasswordSecretKey,
 		userTransport:     userTransport,
+		userGrpcTransport: userGrpcTransport,
 	}
 }
 
 func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenRequest) (*JWTUserToken, error) {
-	user, err := s.userTransport.GetUser(ctx, request.Login)
-	if err != nil {
-		return nil, fmt.Errorf("GetUser request err: %w", err)
-	}
+	//user, err := s.userTransport.GetUser(ctx, request.Login)
+	//if err != nil {
+	//	return nil, fmt.Errorf("GetUser request err: %w", err)
+	//}
+
+	user, err := s.userGrpcTransport.GetUserByLogin(ctx, request.Login)
 
 	generatedPassword := s.generatePassword(request.Password)
 	if user.Password != generatedPassword {
@@ -50,7 +55,7 @@ func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 	}
 
 	claims := MyCustomClaims{
-		user.ID,
+		int(user.Id),
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -66,7 +71,7 @@ func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 	}
 
 	rClaims := MyCustomClaims{
-		user.ID,
+		int(user.Id),
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(40 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -83,7 +88,7 @@ func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 	userToken := entity.UserToken{
 		Token:        tokenString,
 		RefreshToken: refreshTokenString,
-		UserID:       user.ID,
+		UserID:       int(user.Id),
 	}
 
 	err = s.repo.CreateUserToken(ctx, userToken)
