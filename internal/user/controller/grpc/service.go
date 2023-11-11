@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"github.com/agadilkhan/pickup-point-service/internal/user/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
 	"go.uber.org/zap"
@@ -28,6 +29,8 @@ func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLogin
 		return nil, fmt.Errorf("GetUserByLogin err: %v", err)
 	}
 
+	s.logger.Info("GetUserByLogin success")
+
 	return &pb.GetUserByLoginResponse{
 		Result: &pb.User{
 			Id:        int64(user.ID),
@@ -38,5 +41,27 @@ func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLogin
 			Login:     user.Login,
 			Password:  user.Password,
 		},
+	}, nil
+}
+
+func (s *Service) CreateUser(ctx context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+	user := entity.User{
+		FirstName: request.Request.FirstName,
+		LastName:  request.Request.LastName,
+		Email:     request.Request.Email,
+		Phone:     request.Request.Phone,
+		Login:     request.Request.Login,
+		Password:  request.Request.Password,
+	}
+	id, err := s.repo.CreateUser(ctx, &user)
+	if err != nil {
+		s.logger.Errorf("failed to CreateUser err: %v", err)
+		return nil, fmt.Errorf("CreateUser err: %v", err)
+	}
+
+	s.logger.Info("CreateUser success")
+
+	return &pb.CreateUserResponse{
+		Id: int64(id),
 	}, nil
 }

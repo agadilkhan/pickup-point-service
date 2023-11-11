@@ -87,6 +87,32 @@
         }
       }
     },
+    "userserviceCreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "userserviceDeleteUserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "userserviceGetUserByIDResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/userserviceUser"
+        }
+      }
+    },
     "userserviceGetUserByLoginRequest": {
       "type": "object",
       "properties": {
@@ -96,6 +122,14 @@
       }
     },
     "userserviceGetUserByLoginResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/userserviceUser"
+        }
+      }
+    },
+    "userserviceUpdateUserResponse": {
       "type": "object",
       "properties": {
         "result": {

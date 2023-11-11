@@ -6,6 +6,42 @@ option go_package = "./;pb";
 
 service UserService {
   rpc GetUserByLogin(GetUserByLoginRequest) returns (GetUserByLoginResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+}
+
+message UpdateUserRequest {
+  int64 id = 1;
+}
+
+message UpdateUserResponse {
+  User result = 1;
+}
+
+message DeleteUserRequest {
+  int64 id = 1;
+}
+
+message DeleteUserResponse {
+  int64 id = 1;
+}
+
+message GetUserByIDRequest {
+  int64 id = 1;
+}
+
+message GetUserByIDResponse {
+  User result = 1;
+}
+
+message CreateUserRequest {
+  User request = 1;
+}
+
+message CreateUserResponse {
+  int64 id = 1;
 }
 
 message GetUserByLoginRequest {

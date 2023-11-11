@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/dto"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -69,8 +70,12 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 	)
 
 	request := struct {
-		Login    string `json:"login"`
-		Password string `json:"password"`
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		Email     string `json:"email"`
+		Phone     string `json:"phone"`
+		Login     string `json:"login"`
+		Password  string `json:"password"`
 	}{}
 
 	if err := ctx.ShouldBindJSON(&request); err != nil {
@@ -79,9 +84,13 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	createUserRequest := auth.CreateUserRequest{
-		Login:    request.Login,
-		Password: request.Password,
+	createUserRequest := dto.CreateUserRequest{
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
+		Email:     request.Email,
+		Phone:     request.Phone,
+		Login:     request.Login,
+		Password:  request.Password,
 	}
 
 	userID, err := h.authService.Register(ctx, createUserRequest)

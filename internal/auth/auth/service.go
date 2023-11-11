@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/dto"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
@@ -37,11 +38,6 @@ func NewAuthService(
 }
 
 func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenRequest) (*JWTUserToken, error) {
-	//user, err := s.userTransport.GetUser(ctx, request.Login)
-	//if err != nil {
-	//	return nil, fmt.Errorf("GetUser request err: %w", err)
-	//}
-
 	user, err := s.userGrpcTransport.GetUserByLogin(ctx, request.Login)
 
 	generatedPassword := s.generatePassword(request.Password)
@@ -105,7 +101,7 @@ func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 }
 
 func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUserToken, error) {
-	claims, err := s.ValidateToken(refreshToken)
+	claims, err := s.validateToken(refreshToken)
 	if err != nil {
 		return nil, fmt.Errorf("ValidateToken err: %v", err)
 	}
@@ -172,20 +168,15 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	return jwtToken, nil
 }
 
-func (s *Service) Register(ctx context.Context, request CreateUserRequest) (int, error) {
+func (s *Service) Register(ctx context.Context, request dto.CreateUserRequest) (int, error) {
 	request.Password = s.generatePassword(request.Password)
 
-	createUserRequest := transport.CreateUserRequest{
-		Login:    request.Login,
-		Password: request.Password,
-	}
-
-	userID, err := s.userTransport.CreateUser(ctx, createUserRequest)
+	resp, err := s.userGrpcTransport.CreateUser(ctx, request)
 	if err != nil {
 		return 0, fmt.Errorf("CreateUser request err: %v", err)
 	}
 
-	return userID, nil
+	return int(resp.Id), nil
 }
 
 func (s *Service) generatePassword(password string) string {
@@ -195,7 +186,7 @@ func (s *Service) generatePassword(password string) string {
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
-func (s *Service) ValidateToken(tokenString string) (jwt.MapClaims, error) {
+func (s *Service) validateToken(tokenString string) (jwt.MapClaims, error) {
 	claims := jwt.MapClaims{}
 
 	keyFunc := func(t *jwt.Token) (interface{}, error) {

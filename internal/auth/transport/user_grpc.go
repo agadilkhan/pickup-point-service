@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/dto"
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -39,4 +40,27 @@ func (t *UserGrpcTransport) GetUserByLogin(ctx context.Context, login string) (*
 	}
 
 	return resp.Result, nil
+}
+
+func (t *UserGrpcTransport) CreateUser(ctx context.Context, request dto.CreateUserRequest) (*pb.CreateUserResponse, error) {
+	resp, err := t.client.CreateUser(ctx, &pb.CreateUserRequest{
+		Request: &pb.User{
+			FirstName: request.FirstName,
+			LastName:  request.LastName,
+			Email:     request.Email,
+			Phone:     request.Phone,
+			Login:     request.Login,
+			Password:  request.Password,
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to CreateUser err: %v", err)
+	}
+	if resp == nil {
+		return nil, fmt.Errorf("not create")
+	}
+
+	return &pb.CreateUserResponse{
+		Id: resp.Id,
+	}, nil
 }
