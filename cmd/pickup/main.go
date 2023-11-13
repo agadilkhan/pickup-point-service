@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/agadilkhan/pickup-point-service/internal/order/applicator"
-	"github.com/agadilkhan/pickup-point-service/internal/order/config"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/applicator"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -13,9 +13,9 @@ func main() {
 	defer logger.Sync()
 
 	l := logger.Sugar()
-	l = l.With("app", "order-service")
+	l = l.With("app", "pickup-service")
 
-	cfg, err := loadConfig("config/order")
+	cfg, err := loadConfig("config/pickup")
 	if err != nil {
 		l.Fatalf("failed to load config: %v", err)
 	}

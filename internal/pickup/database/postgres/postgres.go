@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"fmt"
-	"github.com/agadilkhan/pickup-point-service/internal/order/config"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

@@ -19,7 +19,7 @@ func NewRouter(logger *zap.SugaredLogger) *router {
 func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 	rt := gin.Default()
 
-	order := rt.Group("/api/order")
+	order := rt.Group("/api/pickup")
 	{
 		order.GET("/:id")
 	}

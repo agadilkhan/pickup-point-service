@@ -2,12 +2,12 @@ package applicator
 
 import (
 	"context"
-	"github.com/agadilkhan/pickup-point-service/internal/order/config"
-	"github.com/agadilkhan/pickup-point-service/internal/order/controller/http"
-	"github.com/agadilkhan/pickup-point-service/internal/order/database/postgres"
-	"github.com/agadilkhan/pickup-point-service/internal/order/entity"
-	"github.com/agadilkhan/pickup-point-service/internal/order/order"
-	"github.com/agadilkhan/pickup-point-service/internal/order/repository"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/database/postgres"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/repository"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
@@ -67,8 +67,8 @@ func (app *Applicator) Run() {
 	l.Info("database connection success")
 
 	repo := repository.NewRepository(mainDb, replicaDB)
-	deps := order.NewDeps(repo, cfg)
-	orderService := order.NewService(deps)
+	deps := pickup.NewDeps(repo, cfg)
+	orderService := pickup.NewService(deps)
 
 	endPointHandler := http.NewEndpointHandler(orderService, l)
 

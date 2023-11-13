@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"github.com/agadilkhan/pickup-point-service/internal/order/database/postgres"
-	"github.com/agadilkhan/pickup-point-service/internal/order/entity"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/database/postgres"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 )
 
 type OrderRepo struct {

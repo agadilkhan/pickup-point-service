@@ -1,17 +1,17 @@
 package http
 
 import (
-	"github.com/agadilkhan/pickup-point-service/internal/order/order"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"go.uber.org/zap"
 )
 
 type EndpointHandler struct {
-	service *order.Service
+	service *pickup.Service
 	logger  *zap.SugaredLogger
 }
 
 func NewEndpointHandler(
-	service *order.Service,
+	service *pickup.Service,
 	logger *zap.SugaredLogger,
 ) *EndpointHandler {
 	return &EndpointHandler{

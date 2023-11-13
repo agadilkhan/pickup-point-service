@@ -1,8 +1,8 @@
-package order
+package pickup
 
 import (
-	"github.com/agadilkhan/pickup-point-service/internal/order/config"
-	"github.com/agadilkhan/pickup-point-service/internal/order/repository"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/repository"
 )
 
 type Deps struct {
