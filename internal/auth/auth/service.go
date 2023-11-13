@@ -47,11 +47,13 @@ func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 
 	type MyCustomClaims struct {
 		UserID int `json:"user_id"`
+		RoleID int `json:"role_id"`
 		jwt.RegisteredClaims
 	}
 
 	claims := MyCustomClaims{
 		int(user.Id),
+		int(user.RoleId),
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -68,6 +70,7 @@ func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 
 	rClaims := MyCustomClaims{
 		int(user.Id),
+		int(user.RoleId),
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(40 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -107,19 +110,23 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	}
 
 	userID, ok := claims["user_id"]
+	roleID, ok := claims["role_id"]
 	if !ok {
 		return nil, fmt.Errorf("user_id could not be parsed from JWT")
 	}
 
-	id := userID.(int)
+	uID := userID.(int)
+	rID := roleID.(int)
 
 	type MyCustomClaims struct {
 		UserID int `json:"user_id"`
+		RoleID int `json:"role_id"`
 		jwt.RegisteredClaims
 	}
 
 	newClaims := MyCustomClaims{
-		id,
+		uID,
+		rID,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -135,7 +142,8 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	}
 
 	newRClaims := MyCustomClaims{
-		id,
+		uID,
+		rID,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(40 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -152,7 +160,7 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	userToken := entity.UserToken{
 		Token:        tokenString,
 		RefreshToken: refreshTokenString,
-		UserID:       id,
+		UserID:       uID,
 	}
 
 	err = s.repo.UpdateUserToken(ctx, userToken)
