@@ -106,5 +106,37 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 }
 
 func (h *EndpointHandler) RenewToken(ctx *gin.Context) {
+	logger := h.logger.With(
+		zap.String("endpoint", "renew_token"),
+		zap.String("params", ctx.FullPath()),
+	)
 
+	request := struct {
+		RefreshToken string `json:"refresh_token"`
+	}{}
+
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		logger.Errorf("failed to Unmarshal err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+
+		return
+	}
+
+	jwtToken, err := h.authService.RenewToken(ctx, request.RefreshToken)
+	if err != nil {
+		logger.Errorf("RenewToken err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+
+		return
+	}
+
+	response := struct {
+		Token        string `json:"token"`
+		RefreshToken string `json:"refresh_token"`
+	}{
+		jwtToken.Token,
+		jwtToken.RefreshToken,
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }

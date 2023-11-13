@@ -13,6 +13,7 @@ type Repository interface {
 type UserTokenRepository interface {
 	CreateUserToken(ctx context.Context, userToken entity.UserToken) error
 	UpdateUserToken(ctx context.Context, userToken entity.UserToken) error
+	GetUserToken(ctx context.Context, refreshToken string) (*entity.UserToken, error)
 }
 
 type Repo struct {

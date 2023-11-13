@@ -115,8 +115,13 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 		return nil, fmt.Errorf("user_id could not be parsed from JWT")
 	}
 
-	uID := userID.(int)
-	rID := roleID.(int)
+	uID := userID.(float64)
+	rID := roleID.(float64)
+
+	jwtToken, err := s.repo.GetUserToken(ctx, refreshToken)
+	if err != nil {
+		return nil, fmt.Errorf("GetUserToken err: %v", err)
+	}
 
 	type MyCustomClaims struct {
 		UserID int `json:"user_id"`
@@ -125,8 +130,8 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	}
 
 	newClaims := MyCustomClaims{
-		uID,
-		rID,
+		int(uID),
+		int(rID),
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -142,8 +147,8 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	}
 
 	newRClaims := MyCustomClaims{
-		uID,
-		rID,
+		int(uID),
+		int(rID),
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(40 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -157,23 +162,20 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 		return nil, fmt.Errorf("SignedString err: %v", err)
 	}
 
-	userToken := entity.UserToken{
-		Token:        tokenString,
-		RefreshToken: refreshTokenString,
-		UserID:       uID,
-	}
+	jwtToken.Token = tokenString
+	jwtToken.RefreshToken = refreshTokenString
 
-	err = s.repo.UpdateUserToken(ctx, userToken)
+	err = s.repo.UpdateUserToken(ctx, *jwtToken)
 	if err != nil {
 		return nil, fmt.Errorf("UpdateUserToken err: %v", err)
 	}
 
-	jwtToken := &JWTUserToken{
-		Token:        tokenString,
-		RefreshToken: refreshTokenString,
+	newToken := &JWTUserToken{
+		Token:        jwtToken.Token,
+		RefreshToken: jwtToken.RefreshToken,
 	}
 
-	return jwtToken, nil
+	return newToken, nil
 }
 
 func (s *Service) Register(ctx context.Context, request dto.CreateUserRequest) (int, error) {

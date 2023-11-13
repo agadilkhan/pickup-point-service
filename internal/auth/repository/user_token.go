@@ -27,3 +27,14 @@ func (r *Repo) UpdateUserToken(ctx context.Context, userToken entity.UserToken) 
 
 	return nil
 }
+
+func (r *Repo) GetUserToken(ctx context.Context, refreshToken string) (*entity.UserToken, error) {
+	var token entity.UserToken
+
+	res := r.replica.WithContext(ctx).Where("refresh_token = ?", refreshToken).First(&token)
+	if res.Error != nil {
+		return nil, fmt.Errorf("not found err %v", res.Error)
+	}
+
+	return &token, nil
+}
