@@ -18,21 +18,18 @@ type Service struct {
 	repo              repository.Repository
 	jwtSecretKey      string
 	passwordSecretKey string
-	userTransport     *transport.UserTransport
 	userGrpcTransport *transport.UserGrpcTransport
 }
 
 func NewAuthService(
 	repo repository.Repository,
 	authConfig config.Auth,
-	userTransport *transport.UserTransport,
 	userGrpcTransport *transport.UserGrpcTransport,
 ) UseCase {
 	return &Service{
 		repo:              repo,
 		jwtSecretKey:      authConfig.JWTSecretKey,
 		passwordSecretKey: authConfig.PasswordSecretKey,
-		userTransport:     userTransport,
 		userGrpcTransport: userGrpcTransport,
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/order/config"
 	"github.com/agadilkhan/pickup-point-service/internal/order/controller/http"
 	"github.com/agadilkhan/pickup-point-service/internal/order/database/postgres"
+	"github.com/agadilkhan/pickup-point-service/internal/order/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/order/order"
 	"github.com/agadilkhan/pickup-point-service/internal/order/repository"
 	"go.uber.org/zap"
@@ -57,6 +58,11 @@ func (app *Applicator) Run() {
 		}
 		l.Info("replicaDB closed")
 	}()
+
+	err = mainDb.AutoMigrate(&entity.Order{}, &entity.OrderItem{}, &entity.Customer{}, &entity.OrderPickup{}, &entity.Company{}, &entity.PickupPoint{}, &entity.Product{})
+	if err != nil {
+		l.Panicf("AutoMigrate err: %v", err)
+	}
 
 	l.Info("database connection success")
 
