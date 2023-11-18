@@ -26,10 +26,12 @@ func (s *Service) GetUserByLogin(ctx context.Context, login string) (*entity.Use
 
 func (s *Service) CreateUser(ctx context.Context, request CreateUserRequest) (int, error) {
 	user := entity.User{
-		FirstName: request.FirstName,
-		LastName:  request.LastName,
-		Login:     request.Login,
-		Password:  request.Password,
+		RoleID:      2,
+		FirstName:   request.FirstName,
+		LastName:    request.LastName,
+		Login:       request.Login,
+		Password:    request.Password,
+		IsConfirmed: false,
 	}
 
 	userID, err := s.repo.CreateUser(ctx, &user)

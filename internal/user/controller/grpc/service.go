@@ -47,7 +47,7 @@ func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLogin
 
 func (s *Service) CreateUser(ctx context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	user := entity.User{
-		RoleID:    int(request.Request.RoleId),
+		RoleID:    2,
 		FirstName: request.Request.FirstName,
 		LastName:  request.Request.LastName,
 		Email:     request.Request.Email,

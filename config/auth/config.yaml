@@ -23,3 +23,11 @@ Transport:
     Timeout: 10s
   UserGrpc:
     Host: localhost:9090
+Kafka:
+  Brokers:
+    - 127.0.0.1:19092
+  Producer:
+    topic: "user-verification"
+  Consumer:
+    topics:
+      - "user-verification"

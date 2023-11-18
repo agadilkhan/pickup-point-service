@@ -4,10 +4,12 @@ import (
 	"context"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/database/postgres"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
+	"github.com/agadilkhan/pickup-point-service/internal/kafka"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
@@ -61,12 +63,26 @@ func (app *Applicator) Run() {
 
 	l.Info("db connection success")
 
+	userVerificationProducer, err := kafka.NewProducer(cfg.Kafka)
+	if err != nil {
+		l.Panicf("failed NewProducer err: %v", err)
+	}
+
+	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l)
+
+	userVerificationConsumer, err := kafka.NewConsumer(l, cfg.Kafka, userVerificationConsumerCallback)
+	if err != nil {
+		l.Panicf("failed NewConsumer err: %v", err)
+	}
+
+	go userVerificationConsumer.Start()
+
 	repo := repository.NewRepository(mainDB, replicaDB)
 
 	//userTransport := transport.NewUserTransport(cfg.User)
 	userGrpcTransport := transport.NewUserGrpcTransport(cfg.UserGrpc)
 
-	authService := auth.NewAuthService(repo, cfg.Auth, userGrpcTransport)
+	authService := auth.NewAuthService(repo, cfg.Auth, userGrpcTransport, userVerificationProducer)
 
 	endPointHandler := http.NewEndpointHandler(authService, l)
 

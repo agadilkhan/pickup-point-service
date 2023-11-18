@@ -4,33 +4,40 @@ import (
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
+	dto2 "github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/dto"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
+	"github.com/agadilkhan/pickup-point-service/internal/kafka"
 	"github.com/golang-jwt/jwt/v5"
+	"math/rand"
 	"time"
 )
 
 type Service struct {
-	repo              repository.Repository
-	jwtSecretKey      string
-	passwordSecretKey string
-	userGrpcTransport *transport.UserGrpcTransport
+	repo                     repository.Repository
+	jwtSecretKey             string
+	passwordSecretKey        string
+	userGrpcTransport        *transport.UserGrpcTransport
+	userVerificationProducer *kafka.Producer
 }
 
 func NewAuthService(
 	repo repository.Repository,
 	authConfig config.Auth,
 	userGrpcTransport *transport.UserGrpcTransport,
+	userVerificationProducer *kafka.Producer,
 ) UseCase {
 	return &Service{
-		repo:              repo,
-		jwtSecretKey:      authConfig.JWTSecretKey,
-		passwordSecretKey: authConfig.PasswordSecretKey,
-		userGrpcTransport: userGrpcTransport,
+		repo:                     repo,
+		jwtSecretKey:             authConfig.JWTSecretKey,
+		passwordSecretKey:        authConfig.PasswordSecretKey,
+		userGrpcTransport:        userGrpcTransport,
+		userVerificationProducer: userVerificationProducer,
 	}
 }
 
@@ -107,9 +114,13 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	}
 
 	userID, ok := claims["user_id"]
-	roleID, ok := claims["role_id"]
 	if !ok {
 		return nil, fmt.Errorf("user_id could not be parsed from JWT")
+	}
+
+	roleID, ok := claims["role_id"]
+	if !ok {
+		return nil, fmt.Errorf("role_id could not be parsed from JWT")
 	}
 
 	uID := userID.(float64)
@@ -182,6 +193,23 @@ func (s *Service) Register(ctx context.Context, request dto.CreateUserRequest) (
 	if err != nil {
 		return 0, fmt.Errorf("CreateUser request err: %v", err)
 	}
+
+	randNum1 := rand.Intn(10)
+	randNum2 := rand.Intn(10)
+	randNum3 := rand.Intn(10)
+	randNum4 := rand.Intn(10)
+
+	msg := dto2.UserCode{
+		UserID: int(resp.Id),
+		Code:   fmt.Sprintf("%d%d%d%d", randNum1, randNum2, randNum3, randNum4),
+	}
+
+	b, err := json.Marshal(&msg)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal UserCode err: %v", err)
+	}
+
+	s.userVerificationProducer.ProduceMessage(b)
 
 	return int(resp.Id), nil
 }

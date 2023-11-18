@@ -7,6 +7,7 @@ type Config struct {
 	Database   `yaml:"Database"`
 	Auth       `yaml:"Auth"`
 	Transport  `yaml:"Transport"`
+	Kafka      `yaml:"Kafka"`
 }
 
 type HttpServer struct {
@@ -44,4 +45,18 @@ type UserGrpcTransport struct {
 type UserTransport struct {
 	Host    string        `yaml:"Host"`
 	Timeout time.Duration `yaml:"Timeout"`
+}
+
+type Kafka struct {
+	Brokers  []string `yaml:"Brokers"`
+	Producer Producer `yaml:"Producer"`
+	Consumer Consumer `yaml:"Consumer"`
+}
+
+type Producer struct {
+	Topic string `yaml:"topic"`
+}
+
+type Consumer struct {
+	Topics []string `yaml:"topics"`
 }

@@ -61,4 +61,5 @@ message User {
   string phone = 6;
   string login = 7;
   string password = 8;
+  bool is_confirmed = 9;
 }
