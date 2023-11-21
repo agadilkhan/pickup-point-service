@@ -1,13 +1,14 @@
 package entity
 
 import (
-	"gorm.io/gorm"
+	"time"
 )
 
 type UserToken struct {
-	*gorm.Model
-	ID           int    `db:"id" gorm:"primary_key"`
-	Token        string `db:"token"`
-	RefreshToken string `db:"refresh_token"`
-	UserID       int    `db:"user_id"`
+	ID           int       `db:"id" gorm:"primary_key;"`
+	UserID       int       `db:"user_id"`
+	Token        string    `db:"token"`
+	RefreshToken string    `db:"refresh_token"`
+	CreatedAt    time.Time `db:"created_at" gorm:"default:now();"`
+	UpdatedAt    time.Time `db:"updated_at" gorm:"default:now();"`
 }

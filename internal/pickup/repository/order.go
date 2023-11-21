@@ -2,22 +2,38 @@ package repository
 
 import (
 	"context"
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/database/postgres"
+	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 )
 
-type OrderRepo struct {
-	Main    *postgres.Db
-	Replica *postgres.Db
-}
+func (r *Repo) GetOrderByCode(ctx context.Context, code string) (*entity.Order, error) {
+	var o entity.Order
 
-func NewOrderRepo(main *postgres.Db, replica *postgres.Db) *OrderRepo {
-	return &OrderRepo{
-		main,
-		replica,
+	res := r.replica.DB.WithContext(ctx).Where("code = ?", code).First(&o)
+	if res.Error != nil {
+		return nil, fmt.Errorf("could not find order by code")
 	}
+
+	return &o, nil
 }
 
-func (o *OrderRepo) GetOrderByID(ctx context.Context, id int) (*entity.Order, error) {
-	return nil, nil
+func (r *Repo) UpdateOrder(ctx context.Context, order *entity.Order) error {
+	res := r.main.DB.Model(&order).WithContext(ctx).Updates(entity.Order{
+		Status: order.Status,
+	})
+
+	if res.Error != nil {
+		return fmt.Errorf("failed to update order err: %v", res.Error)
+	}
+
+	return nil
+}
+
+func (r *Repo) CreateOrder(ctx context.Context, order *entity.Order) (int, error) {
+	res := r.main.DB.WithContext(ctx).Create(order)
+	if res.Error != nil {
+		return 0, fmt.Errorf("could not create order")
+	}
+
+	return order.ID, nil
 }

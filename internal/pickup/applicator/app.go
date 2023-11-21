@@ -5,9 +5,9 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/database/postgres"
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/repository"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/transport"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
@@ -59,18 +59,15 @@ func (app *Applicator) Run() {
 		l.Info("replicaDB closed")
 	}()
 
-	err = mainDb.AutoMigrate(&entity.Order{}, &entity.OrderItem{}, &entity.Customer{}, &entity.OrderPickup{}, &entity.Company{}, &entity.PickupPoint{}, &entity.Product{})
-	if err != nil {
-		l.Panicf("AutoMigrate err: %v", err)
-	}
-
 	l.Info("database connection success")
 
 	repo := repository.NewRepository(mainDb, replicaDB)
-	deps := pickup.NewDeps(repo, cfg)
-	orderService := pickup.NewService(deps)
 
-	endPointHandler := http.NewEndpointHandler(orderService, l)
+	userGrpcTransport := transport.NewUserGrpcTransport(cfg.UserGrpc)
+
+	pickupService := pickup.NewPickupService(repo, userGrpcTransport)
+
+	endPointHandler := http.NewEndpointHandler(pickupService, l, cfg)
 
 	router := http.NewRouter(l)
 	httpConfig := cfg.HttpServer

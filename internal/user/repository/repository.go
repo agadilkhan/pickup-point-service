@@ -13,6 +13,7 @@ type Repository interface {
 type UserRepository interface {
 	CreateUser(ctx context.Context, user *entity.User) (int, error)
 	GetUserByLogin(ctx context.Context, login string) (*entity.User, error)
+	GetUserByID(ctx context.Context, id int) (*entity.User, error)
 }
 
 type Repo struct {

@@ -25,3 +25,14 @@ func (r *Repo) GetUserByLogin(ctx context.Context, login string) (*entity.User, 
 
 	return &user, nil
 }
+
+func (r *Repo) GetUserByID(ctx context.Context, id int) (*entity.User, error) {
+	var user entity.User
+
+	res := r.Replica.WithContext(ctx).Where("id = ?", id).First(&user)
+	if res.Error != nil {
+		return nil, fmt.Errorf("failed to get user by id err: %v", res.Error)
+	}
+
+	return &user, nil
+}

@@ -6,7 +6,6 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/user/controller/grpc"
 	"github.com/agadilkhan/pickup-point-service/internal/user/controller/http"
 	"github.com/agadilkhan/pickup-point-service/internal/user/database/postgres"
-	"github.com/agadilkhan/pickup-point-service/internal/user/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
 	"github.com/agadilkhan/pickup-point-service/internal/user/user"
 	"go.uber.org/zap"
@@ -60,14 +59,12 @@ func (app *Applicator) Run() {
 		l.Info("ReplicaDB closed")
 	}()
 
-	mainDB.AutoMigrate(&entity.User{})
-
 	l.Info("database connection success")
 
 	repo := repository.NewRepository(mainDB, replicaDB)
 	_ = repo
 
-	userService := user.NewService(repo)
+	userService := user.NewUserService(repo)
 
 	endpointHandler := http.NewEndpointHandler(userService, l)
 

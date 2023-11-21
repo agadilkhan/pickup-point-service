@@ -1,15 +1,18 @@
 package repository
 
-import "github.com/agadilkhan/pickup-point-service/internal/pickup/database/postgres"
+import (
+	"context"
+	"fmt"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
+)
 
-type CustomerRepo struct {
-	Main    *postgres.Db
-	Replica *postgres.Db
-}
+func (r *Repo) GetCustomerByID(ctx context.Context, id int) (*entity.Customer, error) {
+	var customer entity.Customer
 
-func NewCustomerRepo(main *postgres.Db, replica *postgres.Db) *CustomerRepo {
-	return &CustomerRepo{
-		main,
-		replica,
+	res := r.replica.DB.WithContext(ctx).Where("id = ?", id).First(&customer)
+	if res.Error != nil {
+		return nil, fmt.Errorf("failed to get customer err: %v", res.Error)
 	}
+
+	return &customer, nil
 }

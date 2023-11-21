@@ -30,7 +30,6 @@ func loadConfig(path string) (cfg *config.Config, err error) {
 	viper.SetConfigType("yaml")
 
 	viper.AutomaticEnv()
-
 	dbPass := viper.GetString("DB_PASSWORD")
 
 	err = viper.ReadInConfig()

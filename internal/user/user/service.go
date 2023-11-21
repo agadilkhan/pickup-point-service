@@ -11,7 +11,7 @@ type Service struct {
 	repo repository.Repository
 }
 
-func NewService(repo repository.Repository) UseCase {
+func NewUserService(repo repository.Repository) UseCase {
 	return &Service{repo: repo}
 }
 

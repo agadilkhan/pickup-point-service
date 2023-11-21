@@ -29,8 +29,6 @@ func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLogin
 		return nil, fmt.Errorf("GetUserByLogin err: %v", err)
 	}
 
-	s.logger.Info("GetUserByLogin success")
-
 	return &pb.GetUserByLoginResponse{
 		Result: &pb.User{
 			Id:        int64(user.ID),
@@ -65,5 +63,27 @@ func (s *Service) CreateUser(ctx context.Context, request *pb.CreateUserRequest)
 
 	return &pb.CreateUserResponse{
 		Id: int64(id),
+	}, nil
+}
+
+func (s *Service) GetUserByID(ctx context.Context, request *pb.GetUserByIDRequest) (*pb.GetUserByIDResponse, error) {
+	user, err := s.repo.GetUserByID(ctx, int(request.Id))
+	if err != nil {
+		s.logger.Errorf("failed to GetUserByID err: %v", err)
+		return nil, fmt.Errorf("GetUserByID err: %v", err)
+	}
+
+	return &pb.GetUserByIDResponse{
+		Result: &pb.User{
+			Id:          int64(user.ID),
+			RoleId:      int64(user.RoleID),
+			FirstName:   user.FirstName,
+			LastName:    user.LastName,
+			Email:       user.Email,
+			Phone:       user.Phone,
+			Login:       user.Login,
+			Password:    user.Password,
+			IsConfirmed: user.IsConfirmed,
+		},
 	}, nil
 }

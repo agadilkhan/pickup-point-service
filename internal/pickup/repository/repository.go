@@ -6,20 +6,39 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 )
 
-type Order interface {
-	GetOrderByID(ctx context.Context, id int) (*entity.Order, error)
+type Repository interface {
+	OrderRepository
+	OrderPickupRepository
+	CustomerRepository
+	CompanyRepository
 }
 
-type Customer interface {
+type OrderRepository interface {
+	GetOrderByCode(ctx context.Context, code string) (*entity.Order, error)
+	UpdateOrder(ctx context.Context, order *entity.Order) error
+	CreateOrder(ctx context.Context, order *entity.Order) (int, error)
 }
 
-type Repository struct {
-	Order
-	Customer
+type OrderPickupRepository interface {
+	CreateOrderPickup(ctx context.Context, pickup *entity.OrderPickup) (int, error)
 }
 
-func NewRepository(main *postgres.Db, replica *postgres.Db) *Repository {
-	return &Repository{
-		Order: NewOrderRepo(main, replica),
+type CustomerRepository interface {
+	GetCustomerByID(ctx context.Context, id int) (*entity.Customer, error)
+}
+
+type CompanyRepository interface {
+	GetCompanyByID(ctx context.Context, id int) (*entity.Company, error)
+}
+
+type Repo struct {
+	main    *postgres.Db
+	replica *postgres.Db
+}
+
+func NewRepository(main, replica *postgres.Db) *Repo {
+	return &Repo{
+		main:    main,
+		replica: replica,
 	}
 }

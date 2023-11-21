@@ -3,6 +3,7 @@ package postgres
 import (
 	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -29,6 +30,11 @@ func New(cfg config.DBNode) (*Db, error) {
 	db, err := gorm.Open(postgres.Open(conf.dsn()), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("connection open err: %v", err)
+	}
+
+	err = db.AutoMigrate(&entity.Order{}, &entity.OrderItem{}, &entity.Customer{}, &entity.OrderPickup{}, &entity.Company{}, &entity.PickupPoint{}, &entity.Product{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to AutoMigrate err: %v", err)
 	}
 
 	return &Db{db}, nil

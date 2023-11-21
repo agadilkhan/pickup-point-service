@@ -1,3 +1,5 @@
+Auth:
+  JWTSecretKey:
 HttpServer:
   Port: 9234
   ShutdownTimeout: 2m
@@ -14,3 +16,6 @@ Database:
     User: 'postgres'
     Password:
     Name: 'pickup'
+Transport:
+  UserGrpc:
+    Host: localhost:9090
