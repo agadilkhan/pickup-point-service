@@ -10,6 +10,7 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
 	"github.com/agadilkhan/pickup-point-service/internal/kafka"
+	"github.com/agadilkhan/pickup-point-service/pkg/cache"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
@@ -63,12 +64,17 @@ func (app *Applicator) Run() {
 
 	l.Info("db connection success")
 
+	redisCli, err := cache.NewRedisClient()
+	if err != nil {
+		l.Panicf("cannot connect to redis: %v", err)
+	}
+
 	userVerificationProducer, err := kafka.NewProducer(cfg.Kafka)
 	if err != nil {
 		l.Panicf("failed NewProducer err: %v", err)
 	}
 
-	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l)
+	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l, redisCli)
 
 	userVerificationConsumer, err := kafka.NewConsumer(l, cfg.Kafka, userVerificationConsumerCallback)
 	if err != nil {
@@ -82,7 +88,7 @@ func (app *Applicator) Run() {
 	//userTransport := transport.NewUserTransport(cfg.User)
 	userGrpcTransport := transport.NewUserGrpcTransport(cfg.UserGrpc)
 
-	authService := auth.NewAuthService(repo, cfg.Auth, userGrpcTransport, userVerificationProducer)
+	authService := auth.NewAuthService(repo, cfg.Auth, userGrpcTransport, userVerificationProducer, redisCli)
 
 	endPointHandler := http.NewEndpointHandler(authService, l)
 

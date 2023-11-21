@@ -104,3 +104,7 @@ func (s *Service) UserInfo(ctx context.Context, login string) (*entity.User, err
 
 	return &res, nil
 }
+
+func (s *Service) ReceiveOrder(ctx context.Context, code string) error {
+	return nil
+}

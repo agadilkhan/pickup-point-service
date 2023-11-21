@@ -24,8 +24,8 @@ type Order struct {
 	CompanyID     int           `db:"company_id"`
 	PointID       int           `db:"point_id"`
 	Code          string        `db:"code" gorm:"size:50;"`
-	Status        OrderStatus   `db:"status"`
-	PaymentStatus PaymentStatus `db:"payment_status"`
+	Status        OrderStatus   `db:"status" gorm:"size:50;"`
+	PaymentStatus PaymentStatus `db:"payment_status" gorm:"size:50;"`
 	TotalAmount   float64       `db:"total_amount"`
 	CreatedAt     time.Time     `db:"created_at" gorm:"default:now();"`
 	UpdatedAt     time.Time     `db:"updated_at" gorm:"default:now();"`

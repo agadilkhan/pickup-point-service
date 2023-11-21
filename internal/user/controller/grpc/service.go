@@ -53,6 +53,7 @@ func (s *Service) CreateUser(ctx context.Context, request *pb.CreateUserRequest)
 		Login:     request.Request.Login,
 		Password:  request.Request.Password,
 	}
+
 	id, err := s.repo.CreateUser(ctx, &user)
 	if err != nil {
 		s.logger.Errorf("failed to CreateUser err: %v", err)
@@ -86,4 +87,14 @@ func (s *Service) GetUserByID(ctx context.Context, request *pb.GetUserByIDReques
 			IsConfirmed: user.IsConfirmed,
 		},
 	}, nil
+}
+
+func (s *Service) ConfirmUser(ctx context.Context, request *pb.ConfirmUserRequest) (*pb.ConfirmUserResponse, error) {
+	err := s.repo.ConfirmUser(ctx, request.Email)
+	if err != nil {
+		s.logger.Errorf("failed to ConfirmUser err: %v", err)
+		return nil, fmt.Errorf("ConfirmUser err: %v", err)
+	}
+
+	return &pb.ConfirmUserResponse{}, nil
 }

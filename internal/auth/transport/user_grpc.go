@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
-	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/dto"
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -13,6 +12,15 @@ import (
 type UserGrpcTransport struct {
 	cfg    config.UserGrpcTransport
 	client pb.UserServiceClient
+}
+
+type CreateUserRequest struct {
+	FirstName string
+	LastName  string
+	Email     string
+	Phone     string
+	Login     string
+	Password  string
 }
 
 func NewUserGrpcTransport(cfg config.UserGrpcTransport) *UserGrpcTransport {
@@ -42,7 +50,7 @@ func (t *UserGrpcTransport) GetUserByLogin(ctx context.Context, login string) (*
 	return resp.Result, nil
 }
 
-func (t *UserGrpcTransport) CreateUser(ctx context.Context, request dto.CreateUserRequest) (*pb.CreateUserResponse, error) {
+func (t *UserGrpcTransport) CreateUser(ctx context.Context, request CreateUserRequest) (*pb.CreateUserResponse, error) {
 	resp, err := t.client.CreateUser(ctx, &pb.CreateUserRequest{
 		Request: &pb.User{
 			FirstName: request.FirstName,
@@ -63,4 +71,15 @@ func (t *UserGrpcTransport) CreateUser(ctx context.Context, request dto.CreateUs
 	return &pb.CreateUserResponse{
 		Id: resp.Id,
 	}, nil
+}
+
+func (t *UserGrpcTransport) ConfirmUser(ctx context.Context, email string) error {
+	_, err := t.client.ConfirmUser(ctx, &pb.ConfirmUserRequest{
+		Email: email,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to ConfirmUser err: %v", err)
+	}
+
+	return nil
 }

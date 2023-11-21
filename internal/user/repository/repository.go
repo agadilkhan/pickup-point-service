@@ -14,6 +14,7 @@ type UserRepository interface {
 	CreateUser(ctx context.Context, user *entity.User) (int, error)
 	GetUserByLogin(ctx context.Context, login string) (*entity.User, error)
 	GetUserByID(ctx context.Context, id int) (*entity.User, error)
+	ConfirmUser(ctx context.Context, email string) error
 }
 
 type Repo struct {

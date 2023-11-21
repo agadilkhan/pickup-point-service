@@ -87,6 +87,9 @@
         }
       }
     },
+    "userserviceConfirmUserResponse": {
+      "type": "object"
+    },
     "userserviceCreateUserResponse": {
       "type": "object",
       "properties": {

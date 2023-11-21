@@ -7,13 +7,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
-	dto2 "github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
-	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/dto"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
 	"github.com/agadilkhan/pickup-point-service/internal/kafka"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/redis/go-redis/v9"
 	"math/rand"
 	"time"
 )
@@ -24,6 +24,7 @@ type Service struct {
 	passwordSecretKey        string
 	userGrpcTransport        *transport.UserGrpcTransport
 	userVerificationProducer *kafka.Producer
+	redisCli                 *redis.Client
 }
 
 func NewAuthService(
@@ -31,6 +32,7 @@ func NewAuthService(
 	authConfig config.Auth,
 	userGrpcTransport *transport.UserGrpcTransport,
 	userVerificationProducer *kafka.Producer,
+	redisCli *redis.Client,
 ) UseCase {
 	return &Service{
 		repo:                     repo,
@@ -38,6 +40,7 @@ func NewAuthService(
 		passwordSecretKey:        authConfig.PasswordSecretKey,
 		userGrpcTransport:        userGrpcTransport,
 		userVerificationProducer: userVerificationProducer,
+		redisCli:                 redisCli,
 	}
 }
 
@@ -186,10 +189,19 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	return newToken, nil
 }
 
-func (s *Service) Register(ctx context.Context, request dto.CreateUserRequest) (int, error) {
+func (s *Service) Register(ctx context.Context, request CreateUserRequest) (int, error) {
 	request.Password = s.generatePassword(request.Password)
 
-	resp, err := s.userGrpcTransport.CreateUser(ctx, request)
+	user := transport.CreateUserRequest{
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
+		Email:     request.Email,
+		Phone:     request.Phone,
+		Login:     request.Login,
+		Password:  request.Password,
+	}
+
+	resp, err := s.userGrpcTransport.CreateUser(ctx, user)
 	if err != nil {
 		return 0, fmt.Errorf("CreateUser request err: %v", err)
 	}
@@ -199,9 +211,9 @@ func (s *Service) Register(ctx context.Context, request dto.CreateUserRequest) (
 	randNum3 := rand.Intn(10)
 	randNum4 := rand.Intn(10)
 
-	msg := dto2.UserCode{
-		UserID: int(resp.Id),
-		Code:   fmt.Sprintf("%d%d%d%d", randNum1, randNum2, randNum3, randNum4),
+	msg := dto.UserCode{
+		Email: request.Email,
+		Code:  fmt.Sprintf("%d%d%d%d", randNum1, randNum2, randNum3, randNum4),
 	}
 
 	b, err := json.Marshal(&msg)
@@ -212,6 +224,24 @@ func (s *Service) Register(ctx context.Context, request dto.CreateUserRequest) (
 	s.userVerificationProducer.ProduceMessage(b)
 
 	return int(resp.Id), nil
+}
+
+func (s *Service) ConfirmUser(ctx context.Context, request ConfirmUserRequest) error {
+	res, err := s.redisCli.Get(ctx, request.Email).Result()
+	if err != nil {
+		return fmt.Errorf("failed to redis get err: %v", err)
+	}
+
+	if res != request.Code {
+		return fmt.Errorf("wrong code")
+	}
+
+	err = s.userGrpcTransport.ConfirmUser(ctx, request.Email)
+	if err != nil {
+		return fmt.Errorf("failed to ConfirmUser err: %v", err)
+	}
+
+	return nil
 }
 
 func (s *Service) generatePassword(password string) string {

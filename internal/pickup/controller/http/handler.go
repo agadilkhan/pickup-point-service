@@ -47,6 +47,16 @@ func (eh *EndpointHandler) Pickup(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "success")
 }
 
+func (eh *EndpointHandler) Receive(ctx *gin.Context) {
+	//logger := eh.logger.With(
+	//	zap.String("endpoint", "receive"),
+	//	zap.String("params", ctx.FullPath()),
+	//)
+	//
+	//code := ctx.Param("code")
+
+}
+
 func (eh *EndpointHandler) GetOrderByCode(ctx *gin.Context) {
 	logger := eh.logger.With(
 		zap.String("endpoint", "get order by code"),

@@ -2,7 +2,6 @@ package http
 
 import (
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
-	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/dto"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -84,7 +83,7 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	createUserRequest := dto.CreateUserRequest{
+	createUserRequest := auth.CreateUserRequest{
 		FirstName: request.FirstName,
 		LastName:  request.LastName,
 		Email:     request.Email,
@@ -95,7 +94,7 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 
 	userID, err := h.authService.Register(ctx, createUserRequest)
 	if err != nil {
-		logger.Errorf("Register request err: %v", err)
+		logger.Errorf("failed to Register err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
 		return
 	}
@@ -122,7 +121,7 @@ func (h *EndpointHandler) RenewToken(ctx *gin.Context) {
 
 	jwtToken, err := h.authService.RenewToken(ctx, request.RefreshToken)
 	if err != nil {
-		logger.Errorf("RenewToken err: %v", err)
+		logger.Errorf("failed to RenewToken err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
 
 		return
@@ -139,6 +138,36 @@ func (h *EndpointHandler) RenewToken(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (eh *EndpointHandler) ConfirmUser(ctx *gin.Context) {
+func (h *EndpointHandler) ConfirmUser(ctx *gin.Context) {
+	logger := h.logger.With(
+		zap.String("endpoint", "renew_token"),
+		zap.String("params", ctx.FullPath()),
+	)
 
+	request := struct {
+		Email string `json:"email"`
+		Code  string `json:"code"`
+	}{}
+
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		logger.Errorf("failed to Unmarshal err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+
+		return
+	}
+
+	userCode := auth.ConfirmUserRequest{
+		Email: request.Email,
+		Code:  request.Code,
+	}
+
+	err := h.authService.ConfirmUser(ctx, userCode)
+	if err != nil {
+		logger.Errorf("failed to ConfirmUser err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "success")
 }
