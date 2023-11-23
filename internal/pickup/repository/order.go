@@ -7,32 +7,103 @@ import (
 )
 
 func (r *Repo) GetOrderByCode(ctx context.Context, code string) (*entity.Order, error) {
-	var o entity.Order
+	var order entity.Order
 
-	res := r.replica.DB.WithContext(ctx).Where("code = ?", code).First(&o)
+	res := r.replica.DB.WithContext(ctx).Where("code = ?", code).First(&order)
 	if res.Error != nil {
-		return nil, fmt.Errorf("could not find order by code")
+		return nil, res.Error
 	}
 
-	return &o, nil
+	var items []entity.OrderItem
+
+	res = r.replica.DB.WithContext(ctx).Where("order_id = ?", order.ID).Find(&items)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	var customer entity.Customer
+
+	res = r.replica.DB.WithContext(ctx).Where("id = ?", order.CustomerID).First(&customer)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	var company entity.Company
+
+	res = r.replica.DB.WithContext(ctx).Where("id = ?", order.CompanyID).First(&company)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	var point entity.PickupPoint
+
+	res = r.replica.DB.WithContext(ctx).Where("id = ?", order.PointID).First(&point)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	order.OrderItems = items
+	order.Customer = customer
+	order.Company = company
+	order.Point = point
+
+	return &order, nil
 }
 
-func (r *Repo) UpdateOrder(ctx context.Context, order *entity.Order) error {
-	res := r.main.DB.Model(&order).WithContext(ctx).Updates(entity.Order{
-		Status: order.Status,
-	})
+func (r *Repo) GetOrders(ctx context.Context, sort, direction string) (*[]entity.Order, error) {
+	var orders []entity.Order
 
+	res := r.replica.DB.WithContext(ctx).Where("status != ?", entity.OrderStatusGiven).Order(fmt.Sprintf("%s%s", sort, direction)).Find(&orders)
 	if res.Error != nil {
-		return fmt.Errorf("failed to update order err: %v", res.Error)
+		return nil, res.Error
 	}
 
-	return nil
+	for _, order := range orders {
+		var items []entity.OrderItem
+
+		res = r.replica.DB.WithContext(ctx).Where("order_id = ?", order.ID).Find(&items)
+		if res.Error != nil {
+			return nil, res.Error
+		}
+
+		var customer entity.Customer
+
+		res = r.replica.DB.WithContext(ctx).Where("id = ?", order.CustomerID).First(&customer)
+		if res.Error != nil {
+			return nil, res.Error
+		}
+
+		var company entity.Company
+
+		res = r.replica.DB.WithContext(ctx).Where("id = ?", order.CompanyID).First(&company)
+		if res.Error != nil {
+			return nil, res.Error
+		}
+
+		var point entity.PickupPoint
+
+		res = r.replica.DB.WithContext(ctx).Where("id = ?", order.PointID).First(&point)
+		if res.Error != nil {
+			return nil, res.Error
+		}
+
+		order.OrderItems = items
+		order.Customer = customer
+		order.Company = company
+		order.Point = point
+	}
+
+	return &orders, nil
+}
+
+func (r *Repo) UpdateOrder(ctx context.Context, order *entity.Order) (*entity.Order, error) {
+	return nil, nil
 }
 
 func (r *Repo) CreateOrder(ctx context.Context, order *entity.Order) (int, error) {
 	res := r.main.DB.WithContext(ctx).Create(order)
 	if res.Error != nil {
-		return 0, fmt.Errorf("could not create order")
+		return 0, res.Error
 	}
 
 	return order.ID, nil

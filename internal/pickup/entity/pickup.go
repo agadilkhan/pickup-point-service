@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
-type OrderPickup struct {
+type PickupOrder struct {
 	ID        int       `db:"id" gorm:"primary_key;"`
 	UserID    int       `db:"user_id"`
 	OrderID   int       `db:"order_id"`

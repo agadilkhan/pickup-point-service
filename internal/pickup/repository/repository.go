@@ -8,26 +8,31 @@ import (
 
 type Repository interface {
 	OrderRepository
-	OrderPickupRepository
+	PickupOrderRepository
 	CustomerRepository
 	CompanyRepository
 }
 
 type OrderRepository interface {
+	GetOrders(ctx context.Context, sort, direction string) (*[]entity.Order, error)
 	GetOrderByCode(ctx context.Context, code string) (*entity.Order, error)
-	UpdateOrder(ctx context.Context, order *entity.Order) error
+	UpdateOrder(ctx context.Context, order *entity.Order) (*entity.Order, error)
 	CreateOrder(ctx context.Context, order *entity.Order) (int, error)
 }
 
-type OrderPickupRepository interface {
-	CreateOrderPickup(ctx context.Context, pickup *entity.OrderPickup) (int, error)
+type PickupOrderRepository interface {
+	CreatePickupOrder(ctx context.Context, pickup *entity.PickupOrder) (int, error)
+	GetPickupOrders(ctx context.Context, userID int) (*[]entity.PickupOrder, error)
+	GetPickupOrderByID(ctx context.Context, userID, pickupOrderID int) (*entity.PickupOrder, error)
 }
 
 type CustomerRepository interface {
+	GetAllCustomers(ctx context.Context) (*[]entity.Customer, error)
 	GetCustomerByID(ctx context.Context, id int) (*entity.Customer, error)
 }
 
 type CompanyRepository interface {
+	GetAllCompanies(ctx context.Context) (*[]entity.Company, error)
 	GetCompanyByID(ctx context.Context, id int) (*entity.Company, error)
 }
 

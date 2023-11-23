@@ -16,3 +16,14 @@ func (r *Repo) GetCustomerByID(ctx context.Context, id int) (*entity.Customer, e
 
 	return &customer, nil
 }
+
+func (r *Repo) GetAllCustomers(ctx context.Context) (*[]entity.Customer, error) {
+	var customers []entity.Customer
+
+	res := r.replica.DB.WithContext(ctx).Find(&customers)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &customers, nil
+}

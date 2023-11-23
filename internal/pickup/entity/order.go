@@ -41,6 +41,5 @@ type OrderItem struct {
 	ProductID int     `db:"product_id"`
 	Quantity  int     `db:"quantity"`
 	SubTotal  float64 `db:"sub_total"`
-	Order     Order   `gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
 	Product   Product `gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
 }

@@ -18,8 +18,8 @@ type UserRepository interface {
 }
 
 type Repo struct {
-	Main    *postgres.Db
-	Replica *postgres.Db
+	main    *postgres.Db
+	replica *postgres.Db
 }
 
 func NewRepository(main *postgres.Db, replica *postgres.Db) *Repo {

@@ -24,17 +24,17 @@ func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 	pickup := rt.Group("/api/pickup")
 	{
 		pickup.POST("/orders/:code/pickup", eh.Pickup)
-		pickup.POST("/orders/:code/refund")
-		pickup.POST("/orders/:code/receive")
+		//pickup.POST("/orders/:code/refund")
+		//pickup.POST("/orders/:code/receive")
 		pickup.GET("/orders/:code", eh.GetOrderByCode)
-		pickup.POST("/orders/create", eh.CreateOrder)
+		//pickup.POST("/orders/", eh.CreateOrder)
+		pickup.GET("/orders/", eh.GetOrders)
 
-		pickup.GET("/:user_id/pickup_orders")
-		pickup.GET("/:user_id/pickup_orders/:id")
-		pickup.GET("/:user_id/info")
+		pickup.GET("/:user_id/pickup_orders", eh.GetPickupOrders)
+		pickup.GET("/:user_id/pickup_orders/:pickup_order_id", eh.GetPickupOrderByID)
 
-		pickup.GET("/customers/:id", eh.GetCustomerByID)
-		pickup.GET("/companies/:id", eh.GetCompanyByID)
+		pickup.GET("/customers/:customer_id", eh.GetCustomerByID)
+		pickup.GET("/companies/:company_id", eh.GetCompanyByID)
 	}
 
 	return rt
