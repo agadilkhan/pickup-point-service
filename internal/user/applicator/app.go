@@ -2,14 +2,15 @@ package applicator
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/agadilkhan/pickup-point-service/internal/user/config"
 	"github.com/agadilkhan/pickup-point-service/internal/user/controller/grpc"
 	"github.com/agadilkhan/pickup-point-service/internal/user/database/postgres"
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
 	"go.uber.org/zap"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 type Applicator struct {
@@ -63,7 +64,7 @@ func (app *Applicator) Run() {
 	_ = repo
 
 	grpcService := grpc.NewService(l, repo)
-	grpcServer := grpc.NewServer(cfg.GrpcServer.Port, grpcService)
+	grpcServer := grpc.NewServer(cfg.GrpcServer.Port, grpcService, l)
 	err = grpcServer.Start()
 	if err != nil {
 		l.Panicf("failed to start grpc server err: %v", err)

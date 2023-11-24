@@ -2,12 +2,13 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func JWTVerify(cfg *config.Config) gin.HandlerFunc {

@@ -3,11 +3,12 @@ package consumer
 import (
 	"context"
 	"encoding/json"
+	"time"
+
 	"github.com/IBM/sarama"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
-	"time"
 )
 
 type UserVerificationCallback struct {

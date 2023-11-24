@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/applicator"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	"github.com/spf13/viper"
@@ -10,6 +11,7 @@ import (
 
 func main() {
 	logger, _ := zap.NewProduction()
+	//nolint:all
 	defer logger.Sync()
 
 	l := logger.Sugar()

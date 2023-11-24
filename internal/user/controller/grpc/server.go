@@ -2,20 +2,24 @@ package grpc
 
 import (
 	"fmt"
+	"go.uber.org/zap"
+	"net"
+
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"
-	"net"
 )
 
 type Server struct {
 	port       string
 	service    *Service
 	grpcServer *grpc.Server
+	logger     *zap.SugaredLogger
 }
 
 func NewServer(
 	port string,
 	service *Service,
+	logger *zap.SugaredLogger,
 ) *Server {
 	var opts []grpc.ServerOption
 
@@ -25,6 +29,7 @@ func NewServer(
 		port:       port,
 		service:    service,
 		grpcServer: grpcServer,
+		logger:     logger,
 	}
 }
 
@@ -36,8 +41,11 @@ func (s *Server) Start() error {
 
 	pb.RegisterUserServiceServer(s.grpcServer, s.service)
 
-	go s.grpcServer.Serve(listener)
-
+	go func() {
+		if err := s.grpcServer.Serve(listener); err != nil {
+			s.logger.Errorf("failed to serve grpc server err: %v", err)
+		}
+	}()
 	return nil
 }
 

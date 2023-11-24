@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
 	"net"
 	"net/http"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type routerHandler interface {
