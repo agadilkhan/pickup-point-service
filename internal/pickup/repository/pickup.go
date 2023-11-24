@@ -43,7 +43,6 @@ func (r *Repo) GetPickupOrders(ctx context.Context, userID int) (*[]entity.Picku
 
 	for _, pickupOrder := range pickupOrders {
 		var order entity.Order
-
 		res = r.replica.DB.WithContext(ctx).Where("id = ?", pickupOrder.OrderID).First(&order)
 		if res.Error != nil {
 			return nil, res.Error
@@ -59,7 +58,6 @@ func (r *Repo) GetPickupOrders(ctx context.Context, userID int) (*[]entity.Picku
 
 		for _, item := range items {
 			var product entity.Product
-
 			res = r.replica.DB.WithContext(ctx).Where("id = ?", item.ProductID).First(&product)
 			if res.Error != nil {
 				return nil, res.Error
@@ -70,21 +68,18 @@ func (r *Repo) GetPickupOrders(ctx context.Context, userID int) (*[]entity.Picku
 		}
 
 		var customer entity.Customer
-
 		res = r.replica.DB.WithContext(ctx).Where("id = ?", order.CustomerID).First(&customer)
 		if res.Error != nil {
 			return nil, res.Error
 		}
 
 		var company entity.Company
-
 		res = r.replica.DB.WithContext(ctx).Where("id = ?", order.CompanyID).First(&company)
 		if res.Error != nil {
 			return nil, res.Error
 		}
 
 		var point entity.PickupPoint
-
 		res = r.replica.DB.WithContext(ctx).Where("id = ?", order.PointID).First(&point)
 		if res.Error != nil {
 			return nil, res.Error
@@ -105,14 +100,12 @@ func (r *Repo) GetPickupOrders(ctx context.Context, userID int) (*[]entity.Picku
 
 func (r *Repo) GetPickupOrderByID(ctx context.Context, userID, pickupOrderID int) (*entity.PickupOrder, error) {
 	var pickupOrder entity.PickupOrder
-
 	res := r.replica.DB.WithContext(ctx).Where("id = ? AND user_id = ?", pickupOrderID, userID).First(&pickupOrder)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 
 	var order entity.Order
-
 	res = r.replica.DB.WithContext(ctx).Where("id = ?", pickupOrder.OrderID).First(&order)
 	if res.Error != nil {
 		return nil, res.Error
@@ -128,7 +121,6 @@ func (r *Repo) GetPickupOrderByID(ctx context.Context, userID, pickupOrderID int
 
 	for _, item := range items {
 		var product entity.Product
-
 		res = r.replica.DB.WithContext(ctx).Where("id = ?", item.ProductID).First(&product)
 		if res.Error != nil {
 			return nil, res.Error
@@ -139,21 +131,18 @@ func (r *Repo) GetPickupOrderByID(ctx context.Context, userID, pickupOrderID int
 	}
 
 	var customer entity.Customer
-
 	res = r.replica.DB.WithContext(ctx).Where("id = ?", order.CustomerID).First(&customer)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 
 	var company entity.Company
-
 	res = r.replica.DB.WithContext(ctx).Where("id = ?", order.CompanyID).First(&company)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 
 	var point entity.PickupPoint
-
 	res = r.replica.DB.WithContext(ctx).Where("id = ?", order.PointID).First(&point)
 	if res.Error != nil {
 		return nil, res.Error

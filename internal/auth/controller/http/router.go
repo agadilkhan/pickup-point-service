@@ -22,7 +22,7 @@ func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 	auth := rt.Group("/api/auth/")
 	{
 		auth.POST("/register", eh.Register)
-		auth.POST("/user-confirm", eh.ConfirmUser)
+		auth.POST("/:email/user-confirm", eh.ConfirmUser)
 		auth.POST("/login", eh.Login)
 		auth.POST("/renew_token", eh.RenewToken)
 	}

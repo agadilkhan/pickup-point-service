@@ -4,10 +4,8 @@ import (
 	"context"
 	"github.com/agadilkhan/pickup-point-service/internal/user/config"
 	"github.com/agadilkhan/pickup-point-service/internal/user/controller/grpc"
-	"github.com/agadilkhan/pickup-point-service/internal/user/controller/http"
 	"github.com/agadilkhan/pickup-point-service/internal/user/database/postgres"
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
-	"github.com/agadilkhan/pickup-point-service/internal/user/user"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
@@ -64,17 +62,6 @@ func (app *Applicator) Run() {
 	repo := repository.NewRepository(mainDB, replicaDB)
 	_ = repo
 
-	userService := user.NewUserService(repo)
-
-	endpointHandler := http.NewEndpointHandler(userService, l)
-
-	router := http.NewRouter(l)
-	httpCfg := cfg.HttpServer
-	server, err := http.NewServer(httpCfg.Port, httpCfg.ShutdownTimeout, router, l, endpointHandler)
-	if err != nil {
-		l.Panicf("failed to create server err: %v", err)
-	}
-
 	grpcService := grpc.NewService(l, repo)
 	grpcServer := grpc.NewServer(cfg.GrpcServer.Port, grpcService)
 	err = grpcServer.Start()
@@ -83,15 +70,6 @@ func (app *Applicator) Run() {
 	}
 
 	defer grpcServer.Close()
-
-	server.Run()
-
-	defer func() {
-		if err := server.Stop(); err != nil {
-			l.Panicf("failed to close server err: %v", err)
-		}
-		l.Info("server closed")
-	}()
 
 	app.gracefulShutdown(cancel)
 }

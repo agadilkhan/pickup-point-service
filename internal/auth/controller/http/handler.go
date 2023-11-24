@@ -144,9 +144,10 @@ func (h *EndpointHandler) ConfirmUser(ctx *gin.Context) {
 		zap.String("params", ctx.FullPath()),
 	)
 
+	email := ctx.Param("user_id")
+
 	request := struct {
-		Email string `json:"email"`
-		Code  string `json:"code"`
+		Code string `json:"code"`
 	}{}
 
 	if err := ctx.ShouldBindJSON(&request); err != nil {
@@ -157,7 +158,7 @@ func (h *EndpointHandler) ConfirmUser(ctx *gin.Context) {
 	}
 
 	userCode := auth.ConfirmUserRequest{
-		Email: request.Email,
+		Email: email,
 		Code:  request.Code,
 	}
 

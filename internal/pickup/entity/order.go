@@ -19,27 +19,27 @@ var (
 )
 
 type Order struct {
-	ID            int           `db:"id" gorm:"primary_key;"`
-	CustomerID    int           `db:"customer_id"`
-	CompanyID     int           `db:"company_id"`
-	PointID       int           `db:"point_id"`
-	Code          string        `db:"code" gorm:"size:50;"`
-	Status        OrderStatus   `db:"status" gorm:"size:50;"`
-	PaymentStatus PaymentStatus `db:"payment_status" gorm:"size:50;"`
-	TotalAmount   float64       `db:"total_amount"`
-	CreatedAt     time.Time     `db:"created_at" gorm:"default:now();"`
-	UpdatedAt     time.Time     `db:"updated_at" gorm:"default:now();"`
-	OrderItems    []OrderItem
-	Customer      Customer    `gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
-	Company       Company     `gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
-	Point         PickupPoint `gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
+	ID            int           `json:"id" db:"id" gorm:"primary_key;"`
+	CustomerID    int           `json:"customer_id" db:"customer_id"`
+	CompanyID     int           `json:"company_id" db:"company_id"`
+	PointID       int           `json:"point_id" db:"point_id"`
+	Code          string        `json:"code" db:"code" gorm:"size:50;"`
+	Status        OrderStatus   `json:"status" db:"status" gorm:"size:50;"`
+	PaymentStatus PaymentStatus `json:"payment_status" db:"payment_status" gorm:"size:50;"`
+	TotalAmount   float64       `json:"total_amount" db:"total_amount"`
+	CreatedAt     time.Time     `json:"created_at" db:"created_at" gorm:"default:now();"`
+	UpdatedAt     time.Time     `json:"updated_at" db:"updated_at" gorm:"default:now();"`
+	OrderItems    []OrderItem   `json:"items"`
+	Customer      Customer      `json:"customer" gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
+	Company       Company       `json:"company" gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
+	Point         PickupPoint   `json:"point" gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
 }
 
 type OrderItem struct {
-	ID        int     `db:"id" gorm:"primary_key;"`
-	OrderID   int     `db:"order_id"`
-	ProductID int     `db:"product_id"`
-	Quantity  int     `db:"quantity"`
-	SubTotal  float64 `db:"sub_total"`
-	Product   Product `gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
+	ID        int     `json:"id" db:"id" gorm:"primary_key;"`
+	OrderID   int     `json:"order_id" db:"order_id"`
+	ProductID int     `json:"product_id" db:"product_id"`
+	Quantity  int     `json:"quantity" db:"quantity"`
+	SubTotal  float64 `json:"sub_total" db:"sub_total"`
+	Product   Product `json:"product" gorm:"constraint:OnUpdate:CASCADE, OnDelete:CASCADE;"`
 }

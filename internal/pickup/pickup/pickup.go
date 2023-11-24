@@ -45,6 +45,15 @@ func (s *Service) Pickup(ctx context.Context, code string) error {
 }
 
 func (s *Service) GetPickupOrders(ctx context.Context, userID int) (*[]entity.PickupOrder, error) {
+	uID, ok := ctx.Value("user_id").(float64)
+	if !ok {
+		return nil, fmt.Errorf("cannot convert to float64")
+	}
+
+	if int(uID) != userID {
+		return nil, fmt.Errorf("wrong user")
+	}
+
 	pickupOrders, err := s.repo.GetPickupOrders(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetOrderPickups err: %v", err)
@@ -54,6 +63,15 @@ func (s *Service) GetPickupOrders(ctx context.Context, userID int) (*[]entity.Pi
 }
 
 func (s *Service) GetPickupOrderByID(ctx context.Context, request GetPickupOrderByIDRequest) (*entity.PickupOrder, error) {
+	userID, ok := ctx.Value("user_id").(float64)
+	if !ok {
+		return nil, fmt.Errorf("cannot convert to float64")
+	}
+
+	if int(userID) != request.UserID {
+		return nil, fmt.Errorf("wrong user")
+	}
+
 	pickupOrder, err := s.repo.GetPickupOrderByID(ctx, request.UserID, request.PickupOrderID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetPickupOrderByID err: %v", err)
