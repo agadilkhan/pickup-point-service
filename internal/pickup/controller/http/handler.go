@@ -1,12 +1,13 @@
 package http
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"net/http"
-	"strconv"
 )
 
 type EndpointHandler struct {
@@ -150,7 +151,10 @@ func (eh *EndpointHandler) GetPickupOrderByID(ctx *gin.Context) {
 		return
 	}
 
-	request := pickup.GetPickupOrderByIDRequest{
+	request := struct {
+		UserID        int
+		PickupOrderID int
+	}{
 		userID,
 		pickupOrderID,
 	}
@@ -170,7 +174,10 @@ func (eh *EndpointHandler) GetOrders(ctx *gin.Context) {
 	sort := ctx.Query("sort")
 	direction := ctx.Query("direction")
 
-	request := pickup.GetAllOrdersRequest{
+	request := struct {
+		Sort      string
+		Direction string
+	}{
 		sort,
 		direction,
 	}

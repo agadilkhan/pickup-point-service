@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"fmt"
+
 	"github.com/agadilkhan/pickup-point-service/internal/user/entity"
 
 	"github.com/agadilkhan/pickup-point-service/internal/user/config"

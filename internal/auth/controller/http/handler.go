@@ -1,10 +1,11 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type EndpointHandler struct {

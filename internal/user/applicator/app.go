@@ -2,14 +2,15 @@ package applicator
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/agadilkhan/pickup-point-service/internal/user/config"
 	"github.com/agadilkhan/pickup-point-service/internal/user/controller/grpc"
 	"github.com/agadilkhan/pickup-point-service/internal/user/database/postgres"
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
 	"go.uber.org/zap"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 type Applicator struct {

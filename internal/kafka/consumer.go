@@ -2,10 +2,11 @@ package kafka
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/IBM/sarama"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	"go.uber.org/zap"
-	"strings"
 )
 
 type ConsumerCallback interface {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/agadilkhan/pickup-point-service/internal/user/applicator"
 	"github.com/agadilkhan/pickup-point-service/internal/user/config"
 	"github.com/spf13/viper"
@@ -10,6 +11,7 @@ import (
 
 func main() {
 	logger, _ := zap.NewProduction()
+	//nolint:all
 	defer logger.Sync()
 
 	l := logger.Sugar()
@@ -28,6 +30,7 @@ func loadConfig(path string) (config config.Config, err error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
+
 	viper.AutomaticEnv()
 
 	dbPass := viper.GetString("DB_PASSWORD")

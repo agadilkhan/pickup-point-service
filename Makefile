@@ -22,7 +22,7 @@ fix-lint: $(TOOLS_BIN)/golangci-lint
 	$(TOOLS_BIN)/golangci-lint run --fix
 
 imports: $(TOOLS_BIN)/goimports
-	$(TOOLS_BIN)/goimports -local "service" -w ./internal ./cmd
+	$(TOOLS_BIN)/goimports -local "pickup-point-service" -w ./internal ./cmd
 
 # INSTALL linter
 $(TOOLS_BIN)/golangci-lint: export GOBIN = $(shell pwd)/$(TOOLS_BIN)

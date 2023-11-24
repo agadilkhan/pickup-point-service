@@ -6,6 +6,9 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+	"time"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
@@ -14,8 +17,6 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/kafka"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/redis/go-redis/v9"
-	"math/rand"
-	"time"
 )
 
 type Service struct {
@@ -46,6 +47,9 @@ func NewAuthService(
 
 func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenRequest) (*JWTUserToken, error) {
 	user, err := s.userGrpcTransport.GetUserByLogin(ctx, request.Login)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetUserByLogin err: %v", err)
+	}
 
 	generatedPassword := s.generatePassword(request.Password)
 	if user.Password != generatedPassword {
