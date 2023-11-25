@@ -37,3 +37,5 @@ $(TOOLS_BIN)/goimports:
 	mkdir -p $(TOOLS_BIN)
 	go install golang.org/x/tools/cmd/goimports@latest
 
+mocks:
+	mockery --dir=internal/pickup/repository --name=Repository --filename=mocks.go --output=internal/pickup/repository/mocks --outpkg=mocks
