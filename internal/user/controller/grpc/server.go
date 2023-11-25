@@ -2,8 +2,9 @@ package grpc
 
 import (
 	"fmt"
-	"go.uber.org/zap"
 	"net"
+
+	"go.uber.org/zap"
 
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"
