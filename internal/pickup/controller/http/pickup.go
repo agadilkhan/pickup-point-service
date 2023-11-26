@@ -1,10 +1,11 @@
 package http
 
 import (
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/middleware"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/middleware"
+	"github.com/gin-gonic/gin"
 )
 
 func (eh *EndpointHandler) initPickupRoutes(api *gin.RouterGroup) {

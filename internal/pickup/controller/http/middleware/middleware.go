@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"fmt"
-	"go.uber.org/zap"
 	"net/http"
 	"strings"
+
+	"go.uber.org/zap"
 
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
 	"github.com/gin-gonic/gin"

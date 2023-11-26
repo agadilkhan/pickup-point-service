@@ -1,10 +1,11 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func (eh *EndpointHandler) initOrderRoutes(api *gin.RouterGroup) {

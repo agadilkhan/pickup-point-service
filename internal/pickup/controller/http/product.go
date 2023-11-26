@@ -1,9 +1,10 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (eh *EndpointHandler) initProductRoutes(api *gin.RouterGroup) {

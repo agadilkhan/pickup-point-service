@@ -3,9 +3,10 @@ package pickup
 import (
 	"context"
 	"fmt"
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 	"math/rand"
 	"sort"
+
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 )
 
 func (s *Service) GetOrders(ctx context.Context, request GetAllOrdersRequest) (*[]entity.Order, error) {
