@@ -2,14 +2,17 @@ package middleware
 
 import (
 	"fmt"
-	"log"
+	"go.uber.org/zap"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
+
+var logger = zap.SugaredLogger{}
 
 func JWTVerify(cfg *config.Config) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -19,6 +22,7 @@ func JWTVerify(cfg *config.Config) gin.HandlerFunc {
 		if len(tokenFields) == 2 && tokenFields[0] == "Bearer" {
 			tokenString = tokenFields[1]
 		} else {
+			logger.Error("incorrect token format")
 			ctx.AbortWithStatus(http.StatusForbidden)
 
 			return
@@ -35,12 +39,14 @@ func JWTVerify(cfg *config.Config) gin.HandlerFunc {
 		})
 
 		if err != nil {
+			logger.Errorf("failed to ParseWithClaims err: %v", err)
 			ctx.AbortWithStatus(http.StatusForbidden)
 
 			return
 		}
 
 		if !token.Valid {
+			logger.Error("invalid token")
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 
 			return
@@ -48,7 +54,8 @@ func JWTVerify(cfg *config.Config) gin.HandlerFunc {
 
 		userID, ok := claims["user_id"]
 		if !ok {
-			log.Printf("user_id could not parsed from JWT")
+			logger.Error("user_id could not parsed from jwt")
+			ctx.AbortWithStatus(http.StatusBadRequest)
 
 			return
 		}
@@ -57,4 +64,22 @@ func JWTVerify(cfg *config.Config) gin.HandlerFunc {
 
 		ctx.Next()
 	}
+}
+
+func CheckUser(ctx *gin.Context) (int, error) {
+	accessUser, ok := ctx.Value("user_id").(float64)
+	if !ok {
+		return 0, fmt.Errorf("failed to convert user_id to float64")
+	}
+
+	requestUser, err := strconv.Atoi(ctx.Param("user_id"))
+	if err != nil {
+		return 0, fmt.Errorf("failed to convert user_id to int: %v", err)
+	}
+
+	if int(accessUser) != requestUser {
+		return 0, fmt.Errorf("the user does not have access to this resource")
+	}
+
+	return requestUser, nil
 }

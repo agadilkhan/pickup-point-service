@@ -2,17 +2,14 @@ package pickup
 
 import (
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/repository"
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/transport"
 )
 
 type Service struct {
-	repo     repository.Repository
-	userGrpc *transport.UserGrpcTransport
+	repo repository.Repository
 }
 
-func NewPickupService(repo repository.Repository, userGrpc *transport.UserGrpcTransport) *Service {
+func NewPickupService(repo repository.Repository) *Service {
 	return &Service{
-		repo:     repo,
-		userGrpc: userGrpc,
+		repo: repo,
 	}
 }

@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"fmt"
-
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 )
 
@@ -55,7 +54,7 @@ func (r *Repo) GetOrders(ctx context.Context, sort, direction string) (*[]entity
 	var result []entity.Order
 	var orders []entity.Order
 
-	res := r.replica.DB.WithContext(ctx).Where("status != ?", entity.OrderStatusGiven).Order(fmt.Sprintf("%s%s", sort, direction)).Find(&orders)
+	res := r.replica.DB.WithContext(ctx).Where("status != ?", entity.OrderStatusGiven).Order(fmt.Sprintf("%s %s", sort, direction)).Find(&orders)
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -115,7 +114,7 @@ func (r *Repo) UpdateOrder(ctx context.Context, order *entity.Order) (*entity.Or
 }
 
 func (r *Repo) CreateOrder(ctx context.Context, order *entity.Order) (int, error) {
-	res := r.main.DB.WithContext(ctx).Create(order)
+	res := r.main.DB.WithContext(ctx).Create(&order)
 	if res.Error != nil {
 		return 0, res.Error
 	}

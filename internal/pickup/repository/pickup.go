@@ -7,6 +7,28 @@ import (
 	"gorm.io/gorm"
 )
 
+func (r *Repo) GetAllPickupPoints(ctx context.Context) (*[]entity.PickupPoint, error) {
+	var points []entity.PickupPoint
+
+	res := r.replica.DB.WithContext(ctx).Find(&points)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &points, nil
+}
+
+func (r *Repo) GetPickupPointByID(ctx context.Context, id int) (*entity.PickupPoint, error) {
+	var point entity.PickupPoint
+
+	res := r.replica.DB.WithContext(ctx).Where("id = ?", id).First(&point)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &point, nil
+}
+
 func (r *Repo) CreatePickupOrder(ctx context.Context, pickup *entity.PickupOrder) (int, error) {
 	err := r.main.DB.Transaction(func(tx *gorm.DB) error {
 		res := tx.WithContext(ctx).Create(&pickup)
@@ -18,6 +40,36 @@ func (r *Repo) CreatePickupOrder(ctx context.Context, pickup *entity.PickupOrder
 		res = tx.Model(&pickup.Order).WithContext(ctx).Updates(entity.Order{
 			Status: entity.OrderStatusGiven,
 		})
+		if res.Error != nil {
+			tx.Rollback()
+			return res.Error
+		}
+
+		var warehouseOrder entity.OrderWarehouse
+
+		res = tx.WithContext(ctx).Where("order_id = ?", pickup.OrderID).First(&warehouseOrder)
+		if res.Error != nil {
+			tx.Rollback()
+			return res.Error
+		}
+
+		var warehouse entity.Warehouse
+
+		res = tx.WithContext(ctx).Where("id = ?", warehouseOrder.WarehouseID).First(&warehouse)
+		if res.Error != nil {
+			tx.Rollback()
+			return res.Error
+		}
+
+		res = tx.Model(&warehouse).WithContext(ctx).Updates(entity.Warehouse{
+			NumOfFreePlaces: warehouseOrder.Warehouse.NumOfFreePlaces + 1,
+		})
+		if res.Error != nil {
+			tx.Rollback()
+			return res.Error
+		}
+
+		res = tx.WithContext(ctx).Delete(&warehouseOrder)
 		if res.Error != nil {
 			tx.Rollback()
 			return res.Error

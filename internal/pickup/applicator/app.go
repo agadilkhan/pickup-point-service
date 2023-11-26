@@ -11,7 +11,6 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/database/postgres"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/repository"
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/transport"
 	"go.uber.org/zap"
 )
 
@@ -64,9 +63,7 @@ func (app *Applicator) Run() {
 
 	repo := repository.NewRepository(mainDb, replicaDB)
 
-	userGrpcTransport := transport.NewUserGrpcTransport(cfg.UserGrpc)
-
-	pickupService := pickup.NewPickupService(repo, userGrpcTransport)
+	pickupService := pickup.NewPickupService(repo)
 
 	endPointHandler := http.NewEndpointHandler(pickupService, l, cfg)
 

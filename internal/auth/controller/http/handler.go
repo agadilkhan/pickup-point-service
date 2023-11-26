@@ -145,7 +145,7 @@ func (h *EndpointHandler) ConfirmUser(ctx *gin.Context) {
 		zap.String("params", ctx.FullPath()),
 	)
 
-	email := ctx.Param("user_id")
+	email := ctx.Param("email")
 
 	request := struct {
 		Code string `json:"code"`
