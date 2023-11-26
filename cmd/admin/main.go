@@ -17,7 +17,7 @@ func main() {
 	l := logger.Sugar()
 	l = l.With(zap.String("app", "admin-service"))
 
-	cfg, err := loadConfig("internal/admin")
+	cfg, err := loadConfig("config/admin")
 	if err != nil {
 		l.Fatalf("failed to load config: %v", err)
 	}

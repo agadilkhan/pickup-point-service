@@ -32,7 +32,7 @@ func NewServer(
 	logger *zap.SugaredLogger,
 	endpointHandler *EndpointHandler,
 ) (*server, error) {
-	listener, err := net.Listen("tcp", fmt.Sprintf("%d", port))
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		return nil, fmt.Errorf("cannot bind HTTP server '%d': %v", port, err)
 	}

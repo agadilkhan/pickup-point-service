@@ -39,7 +39,7 @@ type Transport struct {
 }
 
 type UserGrpcTransport struct {
-	Host string `yaml:"host"`
+	Host string `yaml:"Host"`
 }
 
 type UserTransport struct {

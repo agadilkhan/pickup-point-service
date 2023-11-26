@@ -1,7 +1,7 @@
 Auth:
   JWTSecretKey:
 HTTPServer:
-  Port: 9236
+  Port: 9235
   ShutdownTimeout: 2m
 Transport:
   UserGrpc:
