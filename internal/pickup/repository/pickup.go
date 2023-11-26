@@ -45,7 +45,7 @@ func (r *Repo) CreatePickupOrder(ctx context.Context, pickup *entity.PickupOrder
 			return res.Error
 		}
 
-		var warehouseOrder entity.OrderWarehouse
+		var warehouseOrder entity.WarehouseOrder
 
 		res = tx.WithContext(ctx).Where("order_id = ?", pickup.OrderID).First(&warehouseOrder)
 		if res.Error != nil {
@@ -61,8 +61,10 @@ func (r *Repo) CreatePickupOrder(ctx context.Context, pickup *entity.PickupOrder
 			return res.Error
 		}
 
+		warehouse.NumOfFreePlaces += 1
+
 		res = tx.Model(&warehouse).WithContext(ctx).Updates(entity.Warehouse{
-			NumOfFreePlaces: warehouseOrder.Warehouse.NumOfFreePlaces + 1,
+			NumOfFreePlaces: warehouse.NumOfFreePlaces,
 		})
 		if res.Error != nil {
 			tx.Rollback()
@@ -86,7 +88,7 @@ func (r *Repo) CreatePickupOrder(ctx context.Context, pickup *entity.PickupOrder
 }
 
 func (r *Repo) GetPickupOrders(ctx context.Context, userID int) (*[]entity.PickupOrder, error) {
-	var result []entity.PickupOrder
+	var result = make([]entity.PickupOrder, 0)
 	var pickupOrders []entity.PickupOrder
 
 	res := r.replica.DB.WithContext(ctx).Where("user_id = ?", userID).Find(&pickupOrders)

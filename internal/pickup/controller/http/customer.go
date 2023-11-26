@@ -6,8 +6,16 @@ import (
 	"strconv"
 )
 
+func (eh *EndpointHandler) initCustomerRoutes(api *gin.RouterGroup) {
+	customers := api.Group("/customers")
+	{
+		customers.GET("/", eh.GetAllCustomers)
+		customers.GET("/:customer_id", eh.GetCustomerByID)
+	}
+}
+
 func (eh *EndpointHandler) GetCustomerByID(ctx *gin.Context) {
-	val := ctx.Param("id")
+	val := ctx.Param("customer_id")
 
 	id, err := strconv.Atoi(val)
 	if err != nil {

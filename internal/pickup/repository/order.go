@@ -51,7 +51,7 @@ func (r *Repo) GetOrderByCode(ctx context.Context, code string) (*entity.Order, 
 }
 
 func (r *Repo) GetOrders(ctx context.Context, sort, direction string) (*[]entity.Order, error) {
-	var result []entity.Order
+	var result = make([]entity.Order, 0)
 	var orders []entity.Order
 
 	res := r.replica.DB.WithContext(ctx).Where("status != ?", entity.OrderStatusGiven).Order(fmt.Sprintf("%s %s", sort, direction)).Find(&orders)

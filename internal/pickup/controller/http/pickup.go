@@ -7,25 +7,32 @@ import (
 	"strconv"
 )
 
-func (eh *EndpointHandler) Pickup(ctx *gin.Context) {
-	code := ctx.Param("code")
+func (eh *EndpointHandler) initPickupRoutes(api *gin.RouterGroup) {
+	pickupOrders := api.Group("/:user_id/pickup_orders")
+	{
+		pickupOrders.GET("/", eh.GetPickupOrders)
+		pickupOrders.GET("/:pickup_order_id", eh.GetPickupOrderByID)
+	}
+	pickupPoints := api.Group("/pickup_points")
+	{
+		pickupPoints.GET("/", eh.GetAllPickupPoints)
+		pickupPoints.GET("/:pickup_point_id", eh.GetPickupPointByID)
+	}
+}
 
-	err := eh.service.Pickup(ctx, code)
+func (eh *EndpointHandler) GetPickupOrderByID(ctx *gin.Context) {
+	userID, err := strconv.Atoi(ctx.Param("user_id"))
 	if err != nil {
-		eh.logger.Errorf("failed to Pickup err: %v", err)
-		ctx.Status(http.StatusInternalServerError)
+		eh.logger.Errorf("failed to convert request user_id to int err: %v", err)
+		ctx.Status(http.StatusBadRequest)
 
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "success")
-}
-
-func (eh *EndpointHandler) GetPickupOrderByID(ctx *gin.Context) {
-	userID, err := middleware.CheckUser(ctx)
+	err = middleware.CheckUser(ctx, userID)
 	if err != nil {
 		eh.logger.Errorf("failed to CheckUser err: %v", err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.Status(http.StatusNotFound)
 
 		return
 	}
@@ -60,10 +67,18 @@ func (eh *EndpointHandler) GetPickupOrderByID(ctx *gin.Context) {
 }
 
 func (eh *EndpointHandler) GetPickupOrders(ctx *gin.Context) {
-	userID, err := middleware.CheckUser(ctx)
+	userID, err := strconv.Atoi(ctx.Param("user_id"))
+	if err != nil {
+		eh.logger.Errorf("failed to convert request user_id to int err: %v", err)
+		ctx.Status(http.StatusBadRequest)
+
+		return
+	}
+
+	err = middleware.CheckUser(ctx, userID)
 	if err != nil {
 		eh.logger.Errorf("failed to CheckUser err: %v", err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.Status(http.StatusNotFound)
 
 		return
 	}

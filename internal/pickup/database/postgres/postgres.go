@@ -34,7 +34,7 @@ func New(cfg config.DBNode) (*Db, error) {
 	}
 
 	err = db.AutoMigrate(&entity.Order{}, &entity.OrderItem{}, &entity.Customer{}, &entity.PickupOrder{}, &entity.Company{}, &entity.PickupPoint{}, &entity.Product{},
-		&entity.Warehouse{}, &entity.OrderWarehouse{})
+		&entity.Warehouse{}, &entity.WarehouseOrder{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to AutoMigrate err: %v", err)
 	}

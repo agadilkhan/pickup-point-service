@@ -8,7 +8,7 @@ type Warehouse struct {
 	Point           PickupPoint `json:"point"`
 }
 
-type OrderWarehouse struct {
+type WarehouseOrder struct {
 	ID          int       `json:"id" db:"id" gorm:"primary_key"`
 	WarehouseID int       `json:"warehouse_id" db:"warehouse_id"`
 	OrderID     int       `json:"order_id" db:"order_id"`

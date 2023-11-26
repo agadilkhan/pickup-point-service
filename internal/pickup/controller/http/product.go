@@ -6,6 +6,14 @@ import (
 	"strconv"
 )
 
+func (eh *EndpointHandler) initProductRoutes(api *gin.RouterGroup) {
+	products := api.Group("/products")
+	{
+		products.GET("/", eh.GetAllProducts)
+		products.GET("/:product_id", eh.GetProductByID)
+	}
+}
+
 func (eh *EndpointHandler) GetAllProducts(ctx *gin.Context) {
 	products, err := eh.service.GetAllProducts(ctx)
 	if err != nil {

@@ -48,8 +48,8 @@ type ProductRepository interface {
 type WarehouseRepository interface {
 	GetAllWarehouses(ctx context.Context) (*[]entity.Warehouse, error)
 	GetWarehouseByID(ctx context.Context, id int) (*entity.Warehouse, error)
-	CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.OrderWarehouse) error
-	GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.OrderWarehouse, error)
+	CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.WarehouseOrder) error
+	GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error)
 }
 
 type Repo struct {

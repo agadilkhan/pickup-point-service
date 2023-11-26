@@ -94,6 +94,10 @@ func (s *Service) ReceiveOrder(ctx context.Context, request ReceiveOrderRequest)
 		return 0, fmt.Errorf("failed to GetOrderByCode")
 	}
 
+	if order.Status != entity.OrderStatusProcessing {
+		return 0, fmt.Errorf("order not ready to receive")
+	}
+
 	// comparing products by id
 	var arr1, arr2 []int
 
@@ -160,8 +164,9 @@ func (s *Service) ReceiveOrder(ctx context.Context, request ReceiveOrderRequest)
 			break
 		}
 	}
+	warehouse.NumOfFreePlaces -= 1
 
-	warehouseOrder := entity.OrderWarehouse{
+	warehouseOrder := entity.WarehouseOrder{
 		WarehouseID: warehouse.ID,
 		OrderID:     order.ID,
 		PlaceNum:    placeNum,

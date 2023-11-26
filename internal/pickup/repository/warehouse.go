@@ -26,18 +26,18 @@ func (r *Repo) GetWarehouseByID(ctx context.Context, id int) (*entity.Warehouse,
 	return &warehouse, nil
 }
 
-func (r *Repo) GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.OrderWarehouse, error) {
-	var orderWarehouses []entity.OrderWarehouse
+func (r *Repo) GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error) {
+	var warehouseOrders []entity.WarehouseOrder
 
-	res := r.replica.DB.WithContext(ctx).Where("warehouse_id = ?", warehouseID).Find(&orderWarehouses)
+	res := r.replica.DB.WithContext(ctx).Where("warehouse_id = ?", warehouseID).Find(&warehouseOrders)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 
-	return &orderWarehouses, nil
+	return &warehouseOrders, nil
 }
 
-func (r *Repo) CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.OrderWarehouse) error {
+func (r *Repo) CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.WarehouseOrder) error {
 	err := r.main.DB.Transaction(func(tx *gorm.DB) error {
 		res := tx.WithContext(ctx).Create(warehouseOrder)
 		if res.Error != nil {
@@ -54,7 +54,7 @@ func (r *Repo) CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.
 		}
 
 		res = tx.Model(&warehouseOrder.Warehouse).Updates(entity.Warehouse{
-			NumOfFreePlaces: warehouseOrder.Warehouse.NumOfFreePlaces - 1,
+			NumOfFreePlaces: warehouseOrder.Warehouse.NumOfFreePlaces,
 		})
 		if res.Error != nil {
 			tx.Rollback()
@@ -71,7 +71,7 @@ func (r *Repo) CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.
 }
 
 func (r *Repo) GetAllWarehouses(ctx context.Context) (*[]entity.Warehouse, error) {
-	var result []entity.Warehouse
+	var result = make([]entity.Warehouse, 0)
 	var warehouses []entity.Warehouse
 
 	res := r.replica.DB.WithContext(ctx).Find(&warehouses)

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/config"
@@ -12,17 +11,21 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var logger = zap.SugaredLogger{}
-
-func JWTVerify(cfg *config.Config) gin.HandlerFunc {
+func JWTVerify(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var tokenString string
 		tokenHeader := ctx.Request.Header.Get("Authorization")
+		if tokenHeader == "" {
+			logger.Errorf("missing key 'Authorization' on header")
+			ctx.AbortWithStatus(http.StatusBadRequest)
+
+			return
+		}
 		tokenFields := strings.Fields(tokenHeader)
 		if len(tokenFields) == 2 && tokenFields[0] == "Bearer" {
 			tokenString = tokenFields[1]
 		} else {
-			logger.Error("incorrect token format")
+			logger.Errorf("invalid token format")
 			ctx.AbortWithStatus(http.StatusForbidden)
 
 			return
@@ -46,7 +49,7 @@ func JWTVerify(cfg *config.Config) gin.HandlerFunc {
 		}
 
 		if !token.Valid {
-			logger.Error("invalid token")
+			logger.Errorf("invalid token")
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 
 			return
@@ -54,7 +57,7 @@ func JWTVerify(cfg *config.Config) gin.HandlerFunc {
 
 		userID, ok := claims["user_id"]
 		if !ok {
-			logger.Error("user_id could not parsed from jwt")
+			logger.Errorf("user_id could not parsed from jwt")
 			ctx.AbortWithStatus(http.StatusBadRequest)
 
 			return
@@ -66,20 +69,15 @@ func JWTVerify(cfg *config.Config) gin.HandlerFunc {
 	}
 }
 
-func CheckUser(ctx *gin.Context) (int, error) {
-	accessUser, ok := ctx.Value("user_id").(float64)
+func CheckUser(ctx *gin.Context, requestUser int) error {
+	contextUser, ok := ctx.Value("user_id").(float64)
 	if !ok {
-		return 0, fmt.Errorf("failed to convert user_id to float64")
+		return fmt.Errorf("failed to convert context user_id to float64")
 	}
 
-	requestUser, err := strconv.Atoi(ctx.Param("user_id"))
-	if err != nil {
-		return 0, fmt.Errorf("failed to convert user_id to int: %v", err)
+	if int(contextUser) != requestUser {
+		return fmt.Errorf("the user does not have access to this resource")
 	}
 
-	if int(accessUser) != requestUser {
-		return 0, fmt.Errorf("the user does not have access to this resource")
-	}
-
-	return requestUser, nil
+	return nil
 }

@@ -100,7 +100,7 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, userID)
+	ctx.JSON(http.StatusCreated, userID)
 }
 
 func (h *EndpointHandler) RenewToken(ctx *gin.Context) {

@@ -6,12 +6,20 @@ import (
 	"strconv"
 )
 
+func (eh *EndpointHandler) initCompanyRoutes(api *gin.RouterGroup) {
+	companies := api.Group("/companies")
+	{
+		companies.GET("/", eh.GetAllCompanies)
+		companies.GET("/:company_id", eh.GetCompanyByID)
+	}
+}
+
 func (eh *EndpointHandler) GetCompanyByID(ctx *gin.Context) {
-	val := ctx.Param("id")
+	val := ctx.Param("company_id")
 
 	id, err := strconv.Atoi(val)
 	if err != nil {
-		eh.logger.Errorf("cannot convert to int: %v", err)
+		eh.logger.Errorf("failed to convert to int: %v", err)
 		ctx.Status(http.StatusBadRequest)
 
 		return
@@ -20,7 +28,7 @@ func (eh *EndpointHandler) GetCompanyByID(ctx *gin.Context) {
 	company, err := eh.service.GetCompanyByID(ctx, id)
 	if err != nil {
 		eh.logger.Errorf("failed to GetCompanyByID err: %v", err)
-		ctx.Status(http.StatusInternalServerError)
+		ctx.Status(http.StatusBadRequest)
 
 		return
 	}

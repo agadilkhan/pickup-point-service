@@ -7,6 +7,31 @@ import (
 	"net/http"
 )
 
+func (eh *EndpointHandler) initOrderRoutes(api *gin.RouterGroup) {
+	orders := api.Group("/orders")
+	{
+		orders.GET("/", eh.GetOrders)
+		orders.POST("/", eh.CreateOrder)
+		orders.GET("/:code", eh.GetOrderByCode)
+		orders.POST("/:code/pickup", eh.Pickup)
+		orders.POST("/:code/receive", eh.ReceiveOrder)
+	}
+}
+
+func (eh *EndpointHandler) Pickup(ctx *gin.Context) {
+	code := ctx.Param("code")
+
+	err := eh.service.Pickup(ctx, code)
+	if err != nil {
+		eh.logger.Errorf("failed to Pickup err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "success")
+}
+
 func (eh *EndpointHandler) CreateOrder(ctx *gin.Context) {
 	request := struct {
 		CustomerID    int                  `json:"customer_id"`
@@ -35,7 +60,7 @@ func (eh *EndpointHandler) CreateOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, orderID)
+	ctx.JSON(http.StatusCreated, orderID)
 }
 
 func (eh *EndpointHandler) GetOrders(ctx *gin.Context) {

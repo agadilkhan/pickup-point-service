@@ -6,6 +6,14 @@ import (
 	"strconv"
 )
 
+func (eh *EndpointHandler) initWarehouseRoutes(api *gin.RouterGroup) {
+	warehouses := api.Group("/warehouses")
+	{
+		warehouses.GET("/", eh.GetAllWarehouses)
+		warehouses.GET("/:warehouse_id", eh.GetWarehouseByID)
+	}
+}
+
 func (eh *EndpointHandler) GetAllWarehouses(ctx *gin.Context) {
 	warehouses, err := eh.service.GetAllWarehouses(ctx)
 	if err != nil {
