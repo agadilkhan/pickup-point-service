@@ -1,8 +1,9 @@
 Auth:
   JWTSecretKey:
-HTTPServer:
+  PasswordSecretKey:
+HttpServer:
   Port: 9235
-  ShutdownTimeout: 2m
+  ShutdownTimeout: 2s
 Transport:
   UserGrpc:
     Host: localhost:9090

@@ -15,15 +15,6 @@ type UserGrpcTransport struct {
 	client pb.UserServiceClient
 }
 
-type CreateUserRequest struct {
-	FirstName string
-	LastName  string
-	Email     string
-	Phone     string
-	Login     string
-	Password  string
-}
-
 func NewUserGrpcTransport(cfg config.UserGrpcTransport) *UserGrpcTransport {
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
@@ -35,6 +26,15 @@ func NewUserGrpcTransport(cfg config.UserGrpcTransport) *UserGrpcTransport {
 		cfg:    cfg,
 		client: client,
 	}
+}
+
+type CreateUserRequest struct {
+	FirstName string
+	LastName  string
+	Email     string
+	Phone     string
+	Login     string
+	Password  string
 }
 
 func (t *UserGrpcTransport) GetUserByLogin(ctx context.Context, login string) (*pb.User, error) {

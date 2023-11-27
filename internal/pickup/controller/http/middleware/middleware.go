@@ -26,7 +26,7 @@ func JWTVerify(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFunc {
 		if len(tokenFields) == 2 && tokenFields[0] == "Bearer" {
 			tokenString = tokenFields[1]
 		} else {
-			logger.Errorf("invalid token format")
+			logger.Errorf("incorrect token format")
 			ctx.AbortWithStatus(http.StatusForbidden)
 
 			return
@@ -56,7 +56,7 @@ func JWTVerify(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFunc {
 			return
 		}
 
-		userID, ok := claims["user_id"]
+		userID, ok := claims["user_id"].(float64)
 		if !ok {
 			logger.Errorf("user_id could not parsed from jwt")
 			ctx.AbortWithStatus(http.StatusBadRequest)
@@ -71,12 +71,9 @@ func JWTVerify(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFunc {
 }
 
 func CheckUser(ctx *gin.Context, requestUser int) error {
-	contextUser, ok := ctx.Value("user_id").(float64)
-	if !ok {
-		return fmt.Errorf("failed to convert context user_id to float64")
-	}
+	contextUser := ctx.Value("user_id")
 
-	if int(contextUser) != requestUser {
+	if contextUser != requestUser {
 		return fmt.Errorf("the user does not have access to this resource")
 	}
 

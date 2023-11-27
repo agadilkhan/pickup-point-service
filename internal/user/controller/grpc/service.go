@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 	"fmt"
-
 	"github.com/agadilkhan/pickup-point-service/internal/user/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
@@ -99,3 +98,63 @@ func (s *Service) ConfirmUser(ctx context.Context, request *pb.ConfirmUserReques
 
 	return &pb.ConfirmUserResponse{}, nil
 }
+
+func (s *Service) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	updateRequest := entity.User{
+		ID:          int(request.Request.Id),
+		RoleID:      2,
+		FirstName:   request.Request.FirstName,
+		LastName:    request.Request.LastName,
+		Email:       request.Request.Email,
+		Phone:       request.Request.Phone,
+		Login:       request.Request.Login,
+		Password:    request.Request.Password,
+		IsConfirmed: false,
+		IsDeleted:   false,
+	}
+
+	user, err := s.repo.UpdateUser(ctx, &updateRequest)
+	if err != nil {
+		s.logger.Errorf("failed to UpdateUser: %v", err)
+		return nil, fmt.Errorf("UpdateUser err: %v", err)
+	}
+
+	return &pb.UpdateUserResponse{
+		Result: &pb.User{
+			Id:          int64(user.ID),
+			RoleId:      int64(user.RoleID),
+			FirstName:   user.FirstName,
+			LastName:    user.LastName,
+			Email:       user.Email,
+			Phone:       user.Phone,
+			Login:       user.Login,
+			Password:    user.Password,
+			IsConfirmed: user.IsConfirmed,
+		},
+	}, nil
+}
+
+func (s *Service) DeleteUser(ctx context.Context, request *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
+	id, err := s.repo.DeleteUser(ctx, int(request.Id))
+	if err != nil {
+		s.logger.Errorf("failed to DeleteUser err: %v", err)
+		return nil, fmt.Errorf("DeleteUser err: %v", err)
+	}
+
+	return &pb.DeleteUserResponse{
+		Id: int64(id),
+	}, nil
+}
+
+//func (s *Service) GetUsers(ctx context.Context, request *pb.GetUsersRequest) (*pb.GetUsersResponse, error) {
+//	users, err := s.repo.GetUsers(ctx)
+//	if err != nil {
+//		s.logger.Errorf("failed to GetUsers: %v", err)
+//		return nil, fmt.Errorf("failed to GetUsers err: %v", err)
+//	}
+//
+//	for _, user := range *users {
+//
+//	}
+//
+//}

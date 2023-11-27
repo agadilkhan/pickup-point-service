@@ -34,14 +34,14 @@ func (app *Applicator) Run() {
 	ctx, cancel := context.WithCancel(context.TODO())
 	_ = ctx
 
-	userGrpcTransport := transport.NewUserGrpcTransport(cfg.UserGrpcTransport)
+	userGrpcTransport := transport.NewUserGrpcTransport(cfg.UserGrpc)
 
-	adminService := admin.NewService(userGrpcTransport)
+	adminService := admin.NewService(cfg.PasswordSecretKey, userGrpcTransport)
 
-	endpointHandler := http.NewEndpointHandler(adminService, l)
+	endpointHandler := http.NewEndpointHandler(adminService, l, cfg)
 
 	router := http.NewRouter(l)
-	httpConfig := cfg.HTTPServer
+	httpConfig := cfg.HttpServer
 	server, err := http.NewServer(httpConfig.Port, httpConfig.ShutdownTimeout, router, l, endpointHandler)
 	if err != nil {
 		l.Panicf("failed to create server: %v", err)

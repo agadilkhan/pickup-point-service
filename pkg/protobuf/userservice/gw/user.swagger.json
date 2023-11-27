@@ -132,6 +132,18 @@
         }
       }
     },
+    "userserviceGetUsersResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/userserviceUser"
+          }
+        }
+      }
+    },
     "userserviceUpdateUserResponse": {
       "type": "object",
       "properties": {

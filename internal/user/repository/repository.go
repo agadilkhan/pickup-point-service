@@ -16,6 +16,9 @@ type UserRepository interface {
 	GetUserByLogin(ctx context.Context, login string) (*entity.User, error)
 	GetUserByID(ctx context.Context, id int) (*entity.User, error)
 	ConfirmUser(ctx context.Context, email string) error
+	GetUsers(ctx context.Context) (*[]entity.User, error)
+	UpdateUser(ctx context.Context, user *entity.User) (*entity.User, error)
+	DeleteUser(ctx context.Context, id int) (int, error)
 }
 
 type Repo struct {

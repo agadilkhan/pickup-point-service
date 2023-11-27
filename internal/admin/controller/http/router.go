@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/agadilkhan/pickup-point-service/internal/admin/controller/http/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,8 +18,17 @@ func NewRouter(logger *zap.SugaredLogger) *router {
 	}
 }
 
-func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
+func (r *router) GetHandler(h *EndpointHandler) http.Handler {
 	rt := gin.Default()
+
+	admin := rt.Group("/api/admin/v1")
+	{
+		admin.Use(middleware.JWTVerify(h.cfg, h.logger))
+		admin.GET("/users/")
+		admin.GET("/users/:user_id", h.GetUserByID)
+		admin.PUT("/users/:user_id", h.UpdateUser)
+		admin.DELETE("/users/:user_id", h.DeleteUser)
+	}
 
 	return rt
 }
