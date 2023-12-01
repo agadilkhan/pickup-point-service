@@ -14,6 +14,10 @@ func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenReques
 		return nil, fmt.Errorf("failed to GetUserByLogin err: %v", err)
 	}
 
+	if !user.IsConfirmed {
+		return nil, fmt.Errorf("user is not confirmed")
+	}
+
 	generatedPassword := s.generatePassword(request.Password)
 	if user.Password != generatedPassword {
 		return nil, fmt.Errorf("password is wrong")
@@ -83,18 +87,15 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 		return nil, fmt.Errorf("ValidateToken err: %v", err)
 	}
 
-	userID, ok := claims["user_id"]
+	userID, ok := claims["user_id"].(float64)
 	if !ok {
 		return nil, fmt.Errorf("user_id could not be parsed from JWT")
 	}
 
-	roleID, ok := claims["role_id"]
+	roleID, ok := claims["role_id"].(float64)
 	if !ok {
 		return nil, fmt.Errorf("role_id could not be parsed from JWT")
 	}
-
-	uID := userID.(float64)
-	rID := roleID.(float64)
 
 	jwtToken, err := s.repo.GetUserToken(ctx, refreshToken)
 	if err != nil {
@@ -108,8 +109,8 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	}
 
 	newClaims := MyCustomClaims{
-		int(uID),
-		int(rID),
+		int(userID),
+		int(roleID),
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -125,8 +126,8 @@ func (s *Service) RenewToken(ctx context.Context, refreshToken string) (*JWTUser
 	}
 
 	newRClaims := MyCustomClaims{
-		int(uID),
-		int(rID),
+		int(userID),
+		int(roleID),
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(40 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

@@ -1,8 +1,11 @@
 package pickup
 
-import "github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
+import (
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
+	"time"
+)
 
-type GetAllOrdersRequest struct {
+type GetOrdersQuery struct {
 	Sort      string
 	Direction string
 }
@@ -30,4 +33,17 @@ type ReceiveOrderRequest struct {
 	Items       []struct {
 		ProductID int `json:"product_id"`
 	} `json:"items"`
+}
+
+type GetCompaniesQuery struct {
+	Name string
+}
+
+type GetPickupOrdersQuery struct {
+	StartDate time.Time
+	EndDate   time.Time
+}
+
+type GetTransactionsQuery struct {
+	TransactionType string
 }

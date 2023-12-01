@@ -22,6 +22,18 @@ func (r *Repo) GetOrderByCode(ctx context.Context, code string) (*entity.Order, 
 		return nil, res.Error
 	}
 
+	var resItems = make([]entity.OrderItem, 0)
+	for _, item := range items {
+		var product entity.Product
+		res = r.replica.DB.WithContext(ctx).Where("id = ?", item.ProductID).First(&product)
+		if res.Error != nil {
+			return nil, res.Error
+		}
+
+		item.Product = product
+		resItems = append(resItems, item)
+	}
+
 	var customer entity.Customer
 
 	res = r.replica.DB.WithContext(ctx).Where("id = ?", order.CustomerID).First(&customer)
@@ -47,6 +59,7 @@ func (r *Repo) GetOrderByCode(ctx context.Context, code string) (*entity.Order, 
 	order.Customer = customer
 	order.Company = company
 	order.Point = point
+	order.OrderItems = resItems
 
 	return &order, nil
 }
@@ -55,7 +68,7 @@ func (r *Repo) GetOrders(ctx context.Context, sort, direction string) (*[]entity
 	var result = make([]entity.Order, 0)
 	var orders []entity.Order
 
-	res := r.replica.DB.WithContext(ctx).Where("status != ?", entity.OrderStatusGiven).Order(fmt.Sprintf("%s %s", sort, direction)).Find(&orders)
+	res := r.replica.DB.WithContext(ctx).Order(fmt.Sprintf("%s %s", sort, direction)).Find(&orders)
 	if res.Error != nil {
 		return nil, res.Error
 	}

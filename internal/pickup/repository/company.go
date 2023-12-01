@@ -18,10 +18,10 @@ func (r *Repo) GetCompanyByID(ctx context.Context, id int) (*entity.Company, err
 	return &company, nil
 }
 
-func (r *Repo) GetAllCompanies(ctx context.Context) (*[]entity.Company, error) {
+func (r *Repo) GetCompanies(ctx context.Context, name string) (*[]entity.Company, error) {
 	var companies []entity.Company
 
-	res := r.replica.DB.WithContext(ctx).Find(&companies)
+	res := r.replica.DB.WithContext(ctx).Where("name LIKE ?", fmt.Sprintf("%%%s%%", name)).Find(&companies)
 	if res.Error != nil {
 		return nil, res.Error
 	}

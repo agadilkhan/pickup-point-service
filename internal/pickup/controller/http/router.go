@@ -25,11 +25,12 @@ func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 	api := rt.Group("/api/pickup/v1")
 	{
 		eh.initOrderRoutes(api)
-		eh.initPickupRoutes(api)
+		eh.initPickupPointRoutes(api)
 		eh.initCustomerRoutes(api)
 		eh.initProductRoutes(api)
 		eh.initCompanyRoutes(api)
 		eh.initWarehouseRoutes(api)
+		eh.initTransactionRoutes(api)
 	}
 	return rt
 }

@@ -10,13 +10,13 @@ import (
 func (eh *EndpointHandler) initProductRoutes(api *gin.RouterGroup) {
 	products := api.Group("/products")
 	{
-		products.GET("/", eh.GetAllProducts)
+		products.GET("/", eh.GetProducts)
 		products.GET("/:product_id", eh.GetProductByID)
 	}
 }
 
-func (eh *EndpointHandler) GetAllProducts(ctx *gin.Context) {
-	products, err := eh.service.GetAllProducts(ctx)
+func (eh *EndpointHandler) GetProducts(ctx *gin.Context) {
+	products, err := eh.service.GetProducts(ctx)
 	if err != nil {
 		eh.logger.Errorf("failed to GetAllProducts err: %v", err)
 		ctx.Status(http.StatusInternalServerError)

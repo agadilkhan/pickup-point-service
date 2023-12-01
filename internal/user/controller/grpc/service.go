@@ -31,27 +31,30 @@ func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLogin
 
 	return &pb.GetUserByLoginResponse{
 		Result: &pb.User{
-			Id:        int64(user.ID),
-			RoleId:    int64(user.RoleID),
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Email:     user.Email,
-			Phone:     user.Phone,
-			Login:     user.Login,
-			Password:  user.Password,
+			Id:          int64(user.ID),
+			RoleId:      int64(user.RoleID),
+			FirstName:   user.FirstName,
+			LastName:    user.LastName,
+			Email:       user.Email,
+			Phone:       user.Phone,
+			Login:       user.Login,
+			Password:    user.Password,
+			IsConfirmed: user.IsConfirmed,
 		},
 	}, nil
 }
 
 func (s *Service) CreateUser(ctx context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	user := entity.User{
-		RoleID:    2,
-		FirstName: request.Request.FirstName,
-		LastName:  request.Request.LastName,
-		Email:     request.Request.Email,
-		Phone:     request.Request.Phone,
-		Login:     request.Request.Login,
-		Password:  request.Request.Password,
+		RoleID:      2,
+		FirstName:   request.Request.FirstName,
+		LastName:    request.Request.LastName,
+		Email:       request.Request.Email,
+		Phone:       request.Request.Phone,
+		Login:       request.Request.Login,
+		Password:    request.Request.Password,
+		IsConfirmed: false,
+		IsDeleted:   false,
 	}
 
 	id, err := s.repo.CreateUser(ctx, &user)
@@ -109,7 +112,7 @@ func (s *Service) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest)
 		Phone:       request.Request.Phone,
 		Login:       request.Request.Login,
 		Password:    request.Request.Password,
-		IsConfirmed: false,
+		IsConfirmed: true,
 		IsDeleted:   false,
 	}
 

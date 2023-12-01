@@ -28,3 +28,7 @@ Kafka:
   Consumer:
     topics:
       - "user-verification"
+Redis:
+  Addr: 'localhost:6379'
+  Password:
+  DB: 0

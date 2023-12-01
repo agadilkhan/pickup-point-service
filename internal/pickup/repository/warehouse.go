@@ -27,7 +27,7 @@ func (r *Repo) GetWarehouseByID(ctx context.Context, id int) (*entity.Warehouse,
 	return &warehouse, nil
 }
 
-func (r *Repo) GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error) {
+func (r *Repo) GetWarehouseOrdersByWarehouseID(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error) {
 	var warehouseOrders []entity.WarehouseOrder
 
 	res := r.replica.DB.WithContext(ctx).Where("warehouse_id = ?", warehouseID).Find(&warehouseOrders)
@@ -38,25 +38,9 @@ func (r *Repo) GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]enti
 	return &warehouseOrders, nil
 }
 
-func (r *Repo) CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.WarehouseOrder) error {
+func (r *Repo) CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.WarehouseOrder) (int, error) {
 	err := r.main.DB.Transaction(func(tx *gorm.DB) error {
-		res := tx.WithContext(ctx).Create(warehouseOrder)
-		if res.Error != nil {
-			tx.Rollback()
-			return res.Error
-		}
-
-		res = tx.Model(&warehouseOrder.Order).WithContext(ctx).Updates(entity.Order{
-			Status: entity.OrderStatusDelivered,
-		})
-		if res.Error != nil {
-			tx.Rollback()
-			return res.Error
-		}
-
-		res = tx.Model(&warehouseOrder.Warehouse).Updates(entity.Warehouse{
-			NumOfFreePlaces: warehouseOrder.Warehouse.NumOfFreePlaces,
-		})
+		res := tx.WithContext(ctx).Create(&warehouseOrder)
 		if res.Error != nil {
 			tx.Rollback()
 			return res.Error
@@ -65,13 +49,13 @@ func (r *Repo) CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.
 		return nil
 	})
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return warehouseOrder.ID, nil
 }
 
-func (r *Repo) GetAllWarehouses(ctx context.Context) (*[]entity.Warehouse, error) {
+func (r *Repo) GetWarehouses(ctx context.Context) (*[]entity.Warehouse, error) {
 	var result = make([]entity.Warehouse, 0)
 	var warehouses []entity.Warehouse
 
@@ -94,4 +78,13 @@ func (r *Repo) GetAllWarehouses(ctx context.Context) (*[]entity.Warehouse, error
 	}
 
 	return &result, nil
+}
+
+func (r *Repo) DeleteWarehouseOrderByOrderID(ctx context.Context, orderID int) error {
+	res := r.main.DB.WithContext(ctx).Where("order_id = ?", orderID).Delete(entity.WarehouseOrder{})
+	if res.Error != nil {
+		return res.Error
+	}
+
+	return nil
 }

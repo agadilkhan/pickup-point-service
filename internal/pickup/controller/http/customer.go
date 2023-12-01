@@ -10,7 +10,7 @@ import (
 func (eh *EndpointHandler) initCustomerRoutes(api *gin.RouterGroup) {
 	customers := api.Group("/customers")
 	{
-		customers.GET("/", eh.GetAllCustomers)
+		customers.GET("/", eh.GetCustomers)
 		customers.GET("/:customer_id", eh.GetCustomerByID)
 	}
 }
@@ -37,8 +37,8 @@ func (eh *EndpointHandler) GetCustomerByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, customer)
 }
 
-func (eh *EndpointHandler) GetAllCustomers(ctx *gin.Context) {
-	customers, err := eh.service.GetAllCustomers(ctx)
+func (eh *EndpointHandler) GetCustomers(ctx *gin.Context) {
+	customers, err := eh.service.GetCustomers(ctx)
 	if err != nil {
 		eh.logger.Errorf("failed to GetAllCustomers err: %v", err)
 		ctx.Status(http.StatusInternalServerError)

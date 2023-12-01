@@ -17,7 +17,7 @@ func (r *Repo) GetProductByID(ctx context.Context, id int) (*entity.Product, err
 	return &product, nil
 }
 
-func (r *Repo) GetAllProducts(ctx context.Context) (*[]entity.Product, error) {
+func (r *Repo) GetProducts(ctx context.Context) (*[]entity.Product, error) {
 	var products []entity.Product
 
 	res := r.replica.DB.WithContext(ctx).Find(&products)

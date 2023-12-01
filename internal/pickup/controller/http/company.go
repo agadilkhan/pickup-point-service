@@ -10,7 +10,7 @@ import (
 func (eh *EndpointHandler) initCompanyRoutes(api *gin.RouterGroup) {
 	companies := api.Group("/companies")
 	{
-		companies.GET("/", eh.GetAllCompanies)
+		companies.GET("/", eh.GetCompanies)
 		companies.GET("/:company_id", eh.GetCompanyByID)
 	}
 }
@@ -37,8 +37,16 @@ func (eh *EndpointHandler) GetCompanyByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, company)
 }
 
-func (eh *EndpointHandler) GetAllCompanies(ctx *gin.Context) {
-	companies, err := eh.service.GetAllCompanies(ctx)
+func (eh *EndpointHandler) GetCompanies(ctx *gin.Context) {
+	name := ctx.Query("name")
+
+	query := struct {
+		Name string
+	}{
+		name,
+	}
+
+	companies, err := eh.service.GetCompanies(ctx, query)
 	if err != nil {
 		eh.logger.Errorf("failed to GetAllCompanies err: %v", err)
 		ctx.Status(http.StatusInternalServerError)

@@ -16,8 +16,8 @@ func (s *Service) GetProductByID(ctx context.Context, id int) (*entity.Product, 
 	return product, nil
 }
 
-func (s *Service) GetAllProducts(ctx context.Context) (*[]entity.Product, error) {
-	products, err := s.repo.GetAllProducts(ctx)
+func (s *Service) GetProducts(ctx context.Context) (*[]entity.Product, error) {
+	products, err := s.repo.GetProducts(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetProducts err: %v", err)
 	}

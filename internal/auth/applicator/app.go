@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/cache"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http"
@@ -14,7 +15,6 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
 	"github.com/agadilkhan/pickup-point-service/internal/kafka"
-	"github.com/agadilkhan/pickup-point-service/pkg/cache"
 	"go.uber.org/zap"
 )
 
@@ -65,7 +65,7 @@ func (app *Applicator) Run() {
 
 	l.Info("db connection success")
 
-	redisCli, err := cache.NewRedisClient()
+	redisCli, err := cache.NewRedisClient(cfg.Redis)
 	if err != nil {
 		l.Panicf("cannot connect to redis: %v", err)
 	}
