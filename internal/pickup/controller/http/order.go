@@ -3,7 +3,6 @@ package http
 import (
 	"net/http"
 
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"github.com/gin-gonic/gin"
 )
@@ -14,15 +13,15 @@ func (eh *EndpointHandler) initOrderRoutes(api *gin.RouterGroup) {
 		orders.GET("/", eh.GetOrders)
 		orders.POST("/", eh.CreateOrder)
 		orders.GET("/:code", eh.GetOrderByCode)
-		orders.POST("/:code/pickup", eh.Pickup)
+		orders.POST("/:code/pickup", eh.PickupOrder)
 		orders.POST("/:code/receive", eh.ReceiveOrder)
 	}
 }
 
-func (eh *EndpointHandler) Pickup(ctx *gin.Context) {
+func (eh *EndpointHandler) PickupOrder(ctx *gin.Context) {
 	code := ctx.Param("code")
 
-	err := eh.service.Pickup(ctx, code)
+	err := eh.service.PickupOrder(ctx, code)
 	if err != nil {
 		eh.logger.Errorf("failed to Pickup err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
@@ -34,17 +33,7 @@ func (eh *EndpointHandler) Pickup(ctx *gin.Context) {
 }
 
 func (eh *EndpointHandler) CreateOrder(ctx *gin.Context) {
-	request := struct {
-		CustomerID    int                  `json:"customer_id"`
-		CompanyID     int                  `json:"company_id"`
-		PointID       int                  `json:"point_id"`
-		Status        entity.OrderStatus   `json:"status"`
-		PaymentStatus entity.PaymentStatus `json:"payment_status"`
-		Items         []struct {
-			ProductID int `json:"product_id"`
-			Quantity  int `json:"quantity"`
-		} `json:"items"`
-	}{}
+	request := pickup.CreateOrderRequest{}
 
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		eh.logger.Errorf("failed to Unmarshal err: %v", err)
@@ -68,7 +57,7 @@ func (eh *EndpointHandler) GetOrders(ctx *gin.Context) {
 	sort := ctx.Query("sort")
 	direction := ctx.Query("direction")
 
-	request := struct {
+	query := struct {
 		Sort      string
 		Direction string
 	}{
@@ -76,7 +65,7 @@ func (eh *EndpointHandler) GetOrders(ctx *gin.Context) {
 		direction,
 	}
 
-	orders, err := eh.service.GetOrders(ctx, request)
+	orders, err := eh.service.GetOrders(ctx, query)
 	if err != nil {
 		eh.logger.Errorf("failed to GetAllOrders err: %v", err)
 		ctx.Status(http.StatusInternalServerError)

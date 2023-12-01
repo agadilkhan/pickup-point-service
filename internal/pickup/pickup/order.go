@@ -3,21 +3,21 @@ package pickup
 import (
 	"context"
 	"fmt"
-	"math/rand"
-	"sort"
-
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
+	"math/rand"
+	"reflect"
+	"sort"
 )
 
-func (s *Service) GetOrders(ctx context.Context, request GetAllOrdersRequest) (*[]entity.Order, error) {
-	if request.Sort == "" {
-		request.Sort = "id"
+func (s *Service) GetOrders(ctx context.Context, query GetOrdersQuery) (*[]entity.Order, error) {
+	if query.Sort == "" {
+		query.Sort = "created_at"
 	}
-	if request.Direction == "" {
-		request.Direction = "asc"
+	if query.Direction == "" {
+		query.Direction = "desc"
 	}
 
-	orders, err := s.repo.GetOrders(ctx, request.Sort, request.Direction)
+	orders, err := s.repo.GetOrders(ctx, query.Sort, query.Direction)
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetAllOrders err: %v", err)
 	}
@@ -89,14 +89,70 @@ func (s *Service) CreateOrder(ctx context.Context, request CreateOrderRequest) (
 	return id, nil
 }
 
+func (s *Service) PickupOrder(ctx context.Context, code string) error {
+	ctxUser, ok := ctx.Value("user_id").(float64)
+	if !ok {
+		return fmt.Errorf("cannot parse user_id from context")
+	}
+
+	order, err := s.GetOrderByCode(ctx, code)
+	if err != nil {
+		return fmt.Errorf("failed to GetOrderByCode err: %v", err)
+	}
+
+	if order.Status != entity.OrderStatusReady {
+		if order.Status == entity.OrderStatusGiven {
+			return fmt.Errorf("order is already given")
+		}
+
+		return fmt.Errorf("order not ready to pickup")
+	}
+
+	if order.PaymentStatus == entity.PaymentStatusNotPaid {
+		return fmt.Errorf("order not paid")
+	}
+
+	userID := int(ctxUser)
+
+	transaction := entity.Transaction{
+		UserID:          userID,
+		OrderID:         order.ID,
+		TransactionType: entity.TransactionTypePickup,
+		Order:           *order,
+	}
+
+	transaction.Order.Status = entity.OrderStatusGiven
+
+	_, err = s.repo.CreateTransaction(ctx, &transaction)
+
+	if err != nil {
+		return fmt.Errorf("failed to CreateTransaction err: %v", err)
+	}
+
+	err = s.repo.DeleteWarehouseOrderByOrderID(ctx, order.ID)
+	if err != nil {
+		return fmt.Errorf("failed to DeleteWarehouseOrderByOrderID err: %v", err)
+	}
+
+	return nil
+
+}
+
 func (s *Service) ReceiveOrder(ctx context.Context, request ReceiveOrderRequest) (int, error) {
+	ctxUser, ok := ctx.Value("user_id").(float64)
+	if !ok {
+		return -1, fmt.Errorf("failed to parse user_id from context")
+	}
+
+	userID := int(ctxUser)
+
 	order, err := s.GetOrderByCode(ctx, request.OrderCode)
 	if err != nil {
-		return 0, fmt.Errorf("failed to GetOrderByCode")
+		return -1, fmt.Errorf("failed to GetOrderByCode")
 	}
 
 	if order.Status != entity.OrderStatusProcessing {
-		return 0, fmt.Errorf("order not ready to receive")
+		return -1, fmt.Errorf("order not ready to receive")
 	}
 
 	// comparing products by id
@@ -105,42 +161,32 @@ func (s *Service) ReceiveOrder(ctx context.Context, request ReceiveOrderRequest)
 	for _, item := range request.Items {
 		arr1 = append(arr1, item.ProductID)
 	}
-
 	for _, item := range order.OrderItems {
 		arr2 = append(arr2, item.ProductID)
 	}
 
-	sort.Slice(arr1, func(i, j int) bool {
-		return arr1[i] < arr1[j]
-	})
-
-	sort.Slice(arr2, func(i, j int) bool {
-		return arr2[i] < arr2[j]
-	})
+	sort.Ints(arr1)
+	sort.Ints(arr2)
 
 	if len(arr1) != len(arr2) {
-		return 0, fmt.Errorf("wrong quantity of products")
+		return -1, fmt.Errorf("wrong quantity of products")
 	}
-
-	for i := 0; i < len(arr1); i++ {
-		if arr1[i] != arr2[i] {
-			return 0, fmt.Errorf("wrong product")
-		}
+	if !reflect.DeepEqual(arr1, arr2) {
+		return -1, fmt.Errorf("wrong products")
 	}
 
 	// checking free place in warehouse
-	warehouse, err := s.repo.GetWarehouseByID(ctx, request.WarehouseID)
+	warehouse, err := s.GetWarehouseByID(ctx, request.WarehouseID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to GetWarehouseByID err: %v", err)
+		return -1, fmt.Errorf("failed to GetWarehouseByID err: %v", err)
 	}
 
-	if warehouse.NumOfFreePlaces == 0 {
-		return 0, fmt.Errorf("not free places")
-	}
-
-	warehouseOrders, err := s.repo.GetWarehouseOrders(ctx, request.WarehouseID)
+	warehouseOrders, err := s.repo.GetWarehouseOrdersByWarehouseID(ctx, warehouse.ID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to GetWarehouseOrders err: %v", err)
+		return -1, fmt.Errorf("failed to GetWarehouseOrders err: %v", err)
+	}
+	if len(*warehouseOrders) == warehouse.NumOfPlaces {
+		return -1, fmt.Errorf("not free place")
 	}
 
 	// selecting place from warehouse for order
@@ -165,19 +211,31 @@ func (s *Service) ReceiveOrder(ctx context.Context, request ReceiveOrderRequest)
 			break
 		}
 	}
-	warehouse.NumOfFreePlaces -= 1
+
+	order.Status = entity.OrderStatusDelivered
 
 	warehouseOrder := entity.WarehouseOrder{
 		WarehouseID: warehouse.ID,
 		OrderID:     order.ID,
 		PlaceNum:    placeNum,
 		Order:       *order,
-		Warehouse:   *warehouse,
 	}
 
-	err = s.repo.CreateWarehouseOrder(ctx, &warehouseOrder)
+	_, err = s.repo.CreateWarehouseOrder(ctx, &warehouseOrder)
 	if err != nil {
-		return 0, fmt.Errorf("failed to ReceiveOrder err: %v", err)
+		return -1, fmt.Errorf("failed to CreateWarehouseOrder err: %v", err)
+	}
+
+	transaction := entity.Transaction{
+		UserID:          userID,
+		OrderID:         order.ID,
+		TransactionType: entity.TransactionTypeReceive,
+		Order:           *order,
+	}
+
+	_, err = s.repo.CreateTransaction(ctx, &transaction)
+	if err != nil {
+		return -1, fmt.Errorf("failed to CreateTransaction err: %v", err)
 	}
 
 	return placeNum, nil

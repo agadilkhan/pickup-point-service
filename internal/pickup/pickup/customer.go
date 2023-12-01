@@ -16,8 +16,8 @@ func (s *Service) GetCustomerByID(ctx context.Context, id int) (*entity.Customer
 	return customer, nil
 }
 
-func (s *Service) GetAllCustomers(ctx context.Context) (*[]entity.Customer, error) {
-	customers, err := s.repo.GetAllCustomers(ctx)
+func (s *Service) GetCustomers(ctx context.Context) (*[]entity.Customer, error) {
+	customers, err := s.repo.GetCustomers(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetAllCustomers err: %v", err)
 	}

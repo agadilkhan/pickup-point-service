@@ -10,13 +10,13 @@ import (
 func (eh *EndpointHandler) initWarehouseRoutes(api *gin.RouterGroup) {
 	warehouses := api.Group("/warehouses")
 	{
-		warehouses.GET("/", eh.GetAllWarehouses)
+		warehouses.GET("/", eh.GetWarehouses)
 		warehouses.GET("/:warehouse_id", eh.GetWarehouseByID)
 	}
 }
 
-func (eh *EndpointHandler) GetAllWarehouses(ctx *gin.Context) {
-	warehouses, err := eh.service.GetAllWarehouses(ctx)
+func (eh *EndpointHandler) GetWarehouses(ctx *gin.Context) {
+	warehouses, err := eh.service.GetWarehouses(ctx)
 	if err != nil {
 		eh.logger.Errorf("failed to GetAllWarehouses err: %v", err)
 		ctx.Status(http.StatusInternalServerError)

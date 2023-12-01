@@ -6,7 +6,7 @@ type Config struct {
 }
 
 type GrpcServer struct {
-	Port string `ymal:"Port"`
+	Port string `yaml:"Port"`
 }
 
 type Database struct {

@@ -68,19 +68,12 @@ func (r *Repo) UpdateUser(ctx context.Context, updatedUser *entity.User) (*entit
 }
 
 func (r *Repo) DeleteUser(ctx context.Context, id int) (int, error) {
-	var user entity.User
-
-	res := r.replica.DB.WithContext(ctx).Where("id = ? AND is_deleted = false", id).First(&user)
-	if res.Error != nil {
-		return 0, res.Error
-	}
-
-	res = r.main.WithContext(ctx).Model(&user).Updates(entity.User{
+	res := r.main.WithContext(ctx).Where("id = ?", id).Updates(entity.User{
 		IsDeleted: true,
 	})
 	if res.Error != nil {
 		return 0, res.Error
 	}
 
-	return user.ID, nil
+	return id, nil
 }

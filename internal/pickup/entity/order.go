@@ -5,7 +5,7 @@ import "time"
 type OrderStatus string
 type PaymentStatus string
 
-var (
+const (
 	OrderStatusProcessing OrderStatus = "processing"
 	OrderStatusDelivered  OrderStatus = "delivered"
 	OrderStatusCancelled  OrderStatus = "cancelled"
@@ -13,7 +13,7 @@ var (
 	OrderStatusGiven      OrderStatus = "given"
 )
 
-var (
+const (
 	PaymentStatusPaid    PaymentStatus = "paid"
 	PaymentStatusNotPaid PaymentStatus = "not paid"
 )

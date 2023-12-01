@@ -16,8 +16,8 @@ func (s *Service) GetCompanyByID(ctx context.Context, id int) (*entity.Company, 
 	return company, nil
 }
 
-func (s *Service) GetAllCompanies(ctx context.Context) (*[]entity.Company, error) {
-	companies, err := s.repo.GetAllCompanies(ctx)
+func (s *Service) GetCompanies(ctx context.Context, query GetCompaniesQuery) (*[]entity.Company, error) {
+	companies, err := s.repo.GetCompanies(ctx, query.Name)
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetAllCompanies err: %v", err)
 	}

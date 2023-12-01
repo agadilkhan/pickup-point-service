@@ -56,7 +56,7 @@ func JWTVerify(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFunc {
 			return
 		}
 
-		userID, ok := claims["user_id"].(float64)
+		userID, ok := claims["user_id"]
 		if !ok {
 			logger.Errorf("user_id could not parsed from jwt")
 			ctx.AbortWithStatus(http.StatusBadRequest)
@@ -71,9 +71,12 @@ func JWTVerify(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFunc {
 }
 
 func CheckUser(ctx *gin.Context, requestUser int) error {
-	contextUser := ctx.Value("user_id")
+	contextUser, ok := ctx.Value("user_id").(float64)
+	if !ok {
+		return fmt.Errorf("failed to convert context user_id to float64")
+	}
 
-	if contextUser != requestUser {
+	if int(contextUser) != requestUser {
 		return fmt.Errorf("the user does not have access to this resource")
 	}
 

@@ -33,8 +33,8 @@ func New(cfg config.DBNode) (*Db, error) {
 		return nil, fmt.Errorf("connection open err: %v", err)
 	}
 
-	err = db.AutoMigrate(&entity.Order{}, &entity.OrderItem{}, &entity.Customer{}, &entity.PickupOrder{}, &entity.Company{}, &entity.PickupPoint{}, &entity.Product{},
-		&entity.Warehouse{}, &entity.WarehouseOrder{})
+	err = db.AutoMigrate(&entity.Order{}, &entity.OrderItem{}, &entity.Customer{}, &entity.Company{}, &entity.PickupPoint{},
+		&entity.Product{}, &entity.Warehouse{}, &entity.WarehouseOrder{}, &entity.Transaction{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to AutoMigrate err: %v", err)
 	}

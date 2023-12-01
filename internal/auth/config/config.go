@@ -1,6 +1,8 @@
 package config
 
-import "time"
+import (
+	"time"
+)
 
 type Config struct {
 	HttpServer `yaml:"HttpServer"`
@@ -8,6 +10,7 @@ type Config struct {
 	Auth       `yaml:"Auth"`
 	Transport  `yaml:"Transport"`
 	Kafka      `yaml:"Kafka"`
+	Redis      `yaml:"Redis"`
 }
 
 type HttpServer struct {
@@ -53,4 +56,10 @@ type Producer struct {
 
 type Consumer struct {
 	Topics []string `yaml:"topics"`
+}
+
+type Redis struct {
+	Addr     string `yaml:"Addr"`
+	Password string `yaml:"Password"`
+	DB       int    `yaml:"DB"`
 }

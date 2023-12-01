@@ -16,17 +16,8 @@ func (s *Service) GetWarehouseByID(ctx context.Context, id int) (*entity.Warehou
 	return warehouse, nil
 }
 
-func (s *Service) GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error) {
-	orderWarehouses, err := s.repo.GetWarehouseOrders(ctx, warehouseID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to GetWarehouseOrders err: %v", err)
-	}
-
-	return orderWarehouses, nil
-}
-
-func (s *Service) GetAllWarehouses(ctx context.Context) (*[]entity.Warehouse, error) {
-	warehouses, err := s.repo.GetAllWarehouses(ctx)
+func (s *Service) GetWarehouses(ctx context.Context) (*[]entity.Warehouse, error) {
+	warehouses, err := s.repo.GetWarehouses(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetWarehouses err: %v", err)
 	}
