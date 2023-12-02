@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"fmt"
-
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 )
 
@@ -124,7 +123,12 @@ func (r *Repo) GetOrders(ctx context.Context, sort, direction string) (*[]entity
 }
 
 func (r *Repo) UpdateOrder(ctx context.Context, order *entity.Order) (*entity.Order, error) {
-	return nil, nil
+	res := r.main.DB.WithContext(ctx).Where("id = ?", order.ID).Updates(&order)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return order, nil
 }
 
 func (r *Repo) CreateOrder(ctx context.Context, order *entity.Order) (int, error) {
@@ -134,4 +138,13 @@ func (r *Repo) CreateOrder(ctx context.Context, order *entity.Order) (int, error
 	}
 
 	return order.ID, nil
+}
+
+func (r *Repo) DeleteOrder(ctx context.Context, orderCode string) (string, error) {
+	res := r.main.DB.WithContext(ctx).Where("code = ?", orderCode).Delete(&entity.Order{})
+	if res.Error != nil {
+		return "", res.Error
+	}
+
+	return orderCode, nil
 }

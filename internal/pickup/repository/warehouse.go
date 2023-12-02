@@ -4,13 +4,12 @@ import (
 	"context"
 
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
-	"gorm.io/gorm"
 )
 
-func (r *Repo) GetWarehouseByID(ctx context.Context, id int) (*entity.Warehouse, error) {
+func (r *Repo) GetWarehouse(ctx context.Context, pointID int) (*entity.Warehouse, error) {
 	var warehouse entity.Warehouse
 
-	res := r.replica.DB.WithContext(ctx).Where("id = ?", id).First(&warehouse)
+	res := r.replica.DB.WithContext(ctx).Where("point_id = ?", pointID).First(&warehouse)
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -27,7 +26,7 @@ func (r *Repo) GetWarehouseByID(ctx context.Context, id int) (*entity.Warehouse,
 	return &warehouse, nil
 }
 
-func (r *Repo) GetWarehouseOrdersByWarehouseID(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error) {
+func (r *Repo) GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error) {
 	var warehouseOrders []entity.WarehouseOrder
 
 	res := r.replica.DB.WithContext(ctx).Where("warehouse_id = ?", warehouseID).Find(&warehouseOrders)
@@ -39,17 +38,9 @@ func (r *Repo) GetWarehouseOrdersByWarehouseID(ctx context.Context, warehouseID 
 }
 
 func (r *Repo) CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.WarehouseOrder) (int, error) {
-	err := r.main.DB.Transaction(func(tx *gorm.DB) error {
-		res := tx.WithContext(ctx).Create(&warehouseOrder)
-		if res.Error != nil {
-			tx.Rollback()
-			return res.Error
-		}
-
-		return nil
-	})
-	if err != nil {
-		return 0, err
+	res := r.main.DB.WithContext(ctx).Create(&warehouseOrder)
+	if res.Error != nil {
+		return 0, res.Error
 	}
 
 	return warehouseOrder.ID, nil
@@ -80,7 +71,7 @@ func (r *Repo) GetWarehouses(ctx context.Context) (*[]entity.Warehouse, error) {
 	return &result, nil
 }
 
-func (r *Repo) DeleteWarehouseOrderByOrderID(ctx context.Context, orderID int) error {
+func (r *Repo) DeleteWarehouseOrder(ctx context.Context, orderID int) error {
 	res := r.main.DB.WithContext(ctx).Where("order_id = ?", orderID).Delete(entity.WarehouseOrder{})
 	if res.Error != nil {
 		return res.Error

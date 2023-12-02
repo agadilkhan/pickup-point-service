@@ -37,7 +37,7 @@ func (r *Repo) GetTransactions(ctx context.Context, userID int, transactionType 
 	var res *gorm.DB
 
 	if transactionType == "" {
-		res = r.replica.DB.WithContext(ctx).Where("user_id = ?").Find(&transactions)
+		res = r.replica.DB.WithContext(ctx).Where("user_id = ?", userID).Find(&transactions)
 	} else {
 		res = r.replica.DB.WithContext(ctx).Where("user_id = ? AND transaction_type = ?", userID, transactionType).Find(&transactions)
 	}
@@ -48,7 +48,7 @@ func (r *Repo) GetTransactions(ctx context.Context, userID int, transactionType 
 
 	for _, transaction := range transactions {
 		var order entity.Order
-		res = r.replica.DB.WithContext(ctx).Where("id = ?", transaction.OrderID)
+		res = r.replica.DB.WithContext(ctx).Where("id = ?", transaction.OrderID).Find(&order)
 		if res.Error != nil {
 			return nil, res.Error
 		}

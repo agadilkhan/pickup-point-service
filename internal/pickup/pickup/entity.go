@@ -2,7 +2,6 @@ package pickup
 
 import (
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
-	"time"
 )
 
 type GetOrdersQuery struct {
@@ -10,18 +9,13 @@ type GetOrdersQuery struct {
 	Direction string
 }
 
-type GetPickupOrderByIDRequest struct {
-	UserID        int
-	PickupOrderID int
-}
-
 type CreateOrderRequest struct {
-	CustomerID    int                  `json:"customer_id"`
-	CompanyID     int                  `json:"company_id"`
-	PointID       int                  `json:"point_id"`
-	Status        entity.OrderStatus   `json:"status"`
-	PaymentStatus entity.PaymentStatus `json:"payment_status"`
-	Items         []struct {
+	CustomerID int                `json:"customer_id"`
+	CompanyID  int                `json:"company_id"`
+	PointID    int                `json:"point_id"`
+	Status     entity.OrderStatus `json:"status"`
+	IsPaid     bool               `json:"is_paid"`
+	Items      []struct {
 		ProductID int `json:"product_id"`
 		Quantity  int `json:"quantity"`
 	} `json:"items"`
@@ -35,13 +29,9 @@ type ReceiveOrderRequest struct {
 	} `json:"items"`
 }
 
-type GetCompaniesQuery struct {
-	Name string
-}
-
-type GetPickupOrdersQuery struct {
-	StartDate time.Time
-	EndDate   time.Time
+type RefundItemRequest struct {
+	ProductID int
+	Quantity  int
 }
 
 type GetTransactionsQuery struct {

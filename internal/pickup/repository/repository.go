@@ -8,12 +8,10 @@ import (
 
 type Repository interface {
 	OrderRepository
-	PickupPointRepository
-	CustomerRepository
-	CompanyRepository
+	TransactionRepository
+	//WarehouseRepository
 	ProductRepository
-	WarehouseRepository
-	Transaction
+	OrderItemRepository
 }
 
 type OrderRepository interface {
@@ -21,39 +19,27 @@ type OrderRepository interface {
 	GetOrderByCode(ctx context.Context, code string) (*entity.Order, error)
 	UpdateOrder(ctx context.Context, order *entity.Order) (*entity.Order, error)
 	CreateOrder(ctx context.Context, order *entity.Order) (int, error)
+	DeleteOrder(ctx context.Context, orderCode string) (string, error)
 }
 
-type PickupPointRepository interface {
-	GetPickupPoints(ctx context.Context) (*[]entity.PickupPoint, error)
-	GetPickupPointByID(ctx context.Context, id int) (*entity.PickupPoint, error)
-}
+//type WarehouseRepository interface {
+//	GetWarehouse(ctx context.Context, pointID int) (*entity.Warehouse, error)
+//	CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.WarehouseOrder) (int, error)
+//	GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error)
+//	DeleteWarehouseOrder(ctx context.Context, orderID int) error
+//}
 
-type CustomerRepository interface {
-	GetCustomers(ctx context.Context) (*[]entity.Customer, error)
-	GetCustomerByID(ctx context.Context, id int) (*entity.Customer, error)
-}
-
-type CompanyRepository interface {
-	GetCompanies(ctx context.Context, name string) (*[]entity.Company, error)
-	GetCompanyByID(ctx context.Context, id int) (*entity.Company, error)
+type TransactionRepository interface {
+	CreateTransaction(ctx context.Context, transaction *entity.Transaction) (int, error)
+	GetTransactions(ctx context.Context, userID int, transactionType string) (*[]entity.Transaction, error)
 }
 
 type ProductRepository interface {
-	GetProductByID(ctx context.Context, id int) (*entity.Product, error)
-	GetProducts(ctx context.Context) (*[]entity.Product, error)
+	GetProduct(ctx context.Context, id int) (*entity.Product, error)
 }
 
-type WarehouseRepository interface {
-	GetWarehouses(ctx context.Context) (*[]entity.Warehouse, error)
-	GetWarehouseByID(ctx context.Context, id int) (*entity.Warehouse, error)
-	CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.WarehouseOrder) (int, error)
-	GetWarehouseOrdersByWarehouseID(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error)
-	DeleteWarehouseOrderByOrderID(ctx context.Context, orderID int) error
-}
-
-type Transaction interface {
-	CreateTransaction(ctx context.Context, transaction *entity.Transaction) (int, error)
-	GetTransactions(ctx context.Context, userID int, transactionType string) (*[]entity.Transaction, error)
+type OrderItemRepository interface {
+	UpdateItem(ctx context.Context, item *entity.OrderItem) (*entity.OrderItem, error)
 }
 
 type Repo struct {

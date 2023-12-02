@@ -20,12 +20,12 @@ func NewRouter(logger *zap.SugaredLogger) *router {
 func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 	rt := gin.Default()
 
-	auth := rt.Group("/api/auth/v1")
+	api := rt.Group("/api/auth/v1")
 	{
-		auth.POST("/register", eh.Register)
-		auth.POST("/:email/user-confirm", eh.ConfirmUser)
-		auth.POST("/login", eh.Login)
-		auth.POST("/renew_token", eh.RenewToken)
+		api.POST("/register", eh.Register)
+		api.POST("/:email/user-confirm", eh.ConfirmUser)
+		api.POST("/login", eh.Login)
+		api.POST("/renew_token", eh.RenewToken)
 	}
 
 	return rt
