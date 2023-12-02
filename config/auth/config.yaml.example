@@ -6,17 +6,17 @@ HttpServer:
   ShutdownTimeout: 2s
 Database:
   Main:
-    Host: 'localhost'
-    Port: '5432'
-    User: 'postgres'
+    Host:
+    Port:
+    User:
     Password:
-    Name: 'auth'
+    Name:
   Replica:
-    Host: 'localhost'
-    Port: '5432'
-    User: 'postgres'
+    Host:
+    Port:
+    User:
     Password:
-    Name: 'auth'
+    Name:
 Transport:
   UserGrpc:
     Host: localhost:9090
@@ -24,11 +24,11 @@ Kafka:
   Brokers:
     - 127.0.0.1:19092
   Producer:
-    topic: "user-verification"
+    topic:
   Consumer:
     topics:
       - "user-verification"
 Redis:
-  Addr: 'localhost:6379'
+  Addr:
   Password:
-  DB: 0
+  DB:

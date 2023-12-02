@@ -151,9 +151,27 @@ func (s *Service) ReceiveOrder(ctx context.Context, orderCode string) error {
 		return fmt.Errorf("order is not ready to receive")
 	}
 
+	var wg sync.WaitGroup
+	errCh := make(chan error, len(order.OrderItems))
+
 	for _, item := range order.OrderItems {
-		if !item.IsAccept {
-			return fmt.Errorf("item has not been accept")
+		wg.Add(1)
+		go func(orderItem entity.OrderItem) {
+			defer wg.Done()
+			if !orderItem.IsAccept {
+				errCh <- fmt.Errorf("item has not been accept")
+			}
+		}(item)
+	}
+
+	go func() {
+		wg.Wait()
+		close(errCh)
+	}()
+
+	for err = range errCh {
+		if err != nil {
+			return err
 		}
 	}
 

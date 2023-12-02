@@ -14,13 +14,18 @@ func (s *Service) ReceiveItem(ctx context.Context, orderCode string, productID i
 	}
 
 	var wg sync.WaitGroup
-	errCh := make(chan error, 0)
+	errCh := make(chan error, len(order.OrderItems))
+
+	found := false
 
 	for _, item := range order.OrderItems {
 		wg.Add(1)
 		go func(orderItem entity.OrderItem) {
+			defer wg.Done()
+
 			if productID == orderItem.ProductID && !orderItem.IsAccept {
 				orderItem.IsAccept = true
+				found = true
 				_, err = s.repo.UpdateItem(ctx, &orderItem)
 				if err != nil {
 					errCh <- err
@@ -30,7 +35,7 @@ func (s *Service) ReceiveItem(ctx context.Context, orderCode string, productID i
 	}
 
 	go func() {
-		wg.Done()
+		wg.Wait()
 		close(errCh)
 	}()
 
@@ -40,7 +45,11 @@ func (s *Service) ReceiveItem(ctx context.Context, orderCode string, productID i
 		}
 	}
 
-	return fmt.Errorf("failed to receive item")
+	if !found {
+		return fmt.Errorf("the item has not been found")
+	}
+
+	return nil
 }
 
 func (s *Service) RefundItem(ctx context.Context, orderCode string, request RefundItemRequest) error {
@@ -49,14 +58,18 @@ func (s *Service) RefundItem(ctx context.Context, orderCode string, request Refu
 		return err
 	}
 
+	found := false
+
 	var wg sync.WaitGroup
-	errCh := make(chan error, 0)
+	errCh := make(chan error, len(order.OrderItems))
 
 	for _, item := range order.OrderItems {
 		wg.Add(1)
 		go func(orderItem entity.OrderItem) {
+			defer wg.Done()
 			if orderItem.ProductID == request.ProductID && orderItem.Quantity >= request.Quantity {
 				orderItem.NumOfRefund = request.Quantity
+				found = true
 				_, err = s.repo.UpdateItem(ctx, &orderItem)
 				if err != nil {
 					errCh <- err
@@ -66,7 +79,7 @@ func (s *Service) RefundItem(ctx context.Context, orderCode string, request Refu
 	}
 
 	go func() {
-		wg.Done()
+		wg.Wait()
 		close(errCh)
 	}()
 
@@ -76,5 +89,9 @@ func (s *Service) RefundItem(ctx context.Context, orderCode string, request Refu
 		}
 	}
 
-	return fmt.Errorf("failed to refund item")
+	if !found {
+		return fmt.Errorf("the item has not been found")
+	}
+
+	return nil
 }

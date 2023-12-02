@@ -14,6 +14,7 @@ func (s *Service) GetUsers(ctx context.Context) (*[]entity.User, error) {
 	}
 
 	var users []entity.User
+	//nolint:all
 	for _, u := range *resp {
 		user := entity.User{
 			ID:          int(u.Result.Id),

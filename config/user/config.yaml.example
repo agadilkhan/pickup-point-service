@@ -1,0 +1,15 @@
+GrpcServer:
+  Port: ":9090"
+Database:
+  Main:
+    Host:
+    Port:
+    User:
+    Password:
+    Name:
+  Replica:
+    Host:
+    Port:
+    User:
+    Password:
+    Name:

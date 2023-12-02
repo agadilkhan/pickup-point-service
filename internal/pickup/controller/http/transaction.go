@@ -29,7 +29,7 @@ func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
 	}
 
 	transactionQuery := pickup.GetTransactionsQuery{
-		query,
+		TransactionType: query,
 	}
 
 	transactions, err := eh.service.GetTransactions(ctx, userID, transactionQuery)

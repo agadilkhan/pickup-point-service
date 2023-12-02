@@ -1,0 +1,18 @@
+Auth:
+  JWTSecretKey:
+HttpServer:
+  Port: 9234
+  ShutdownTimeout: 2m
+Database:
+  Main:
+    Host:
+    Port:
+    User:
+    Password:
+    Name:
+  Replica:
+    Host:
+    Port:
+    User:
+    Password:
+    Name:

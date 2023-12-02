@@ -167,7 +167,7 @@ func (t *UserGrpcTransport) GetUsers(ctx context.Context) (*[]pb.GetUsersRespons
 				IsConfirmed: res.Result.IsConfirmed,
 			},
 		}
-
+		//nolint:all
 		users = append(users, user)
 	}
 }
