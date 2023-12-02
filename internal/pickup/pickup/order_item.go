@@ -3,6 +3,8 @@ package pickup
 import (
 	"context"
 	"fmt"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
+	"sync"
 )
 
 func (s *Service) ReceiveItem(ctx context.Context, orderCode string, productID int) error {
@@ -11,15 +13,30 @@ func (s *Service) ReceiveItem(ctx context.Context, orderCode string, productID i
 		return err
 	}
 
-	for _, item := range order.OrderItems {
-		if productID == item.ProductID && !item.IsAccept {
-			item.IsAccept = true
-			_, err = s.repo.UpdateItem(ctx, &item)
-			if err != nil {
-				return fmt.Errorf("failed to UpdateItem err: %v", err)
-			}
+	var wg sync.WaitGroup
+	errCh := make(chan error, 0)
 
-			return nil
+	for _, item := range order.OrderItems {
+		wg.Add(1)
+		go func(orderItem entity.OrderItem) {
+			if productID == orderItem.ProductID && !orderItem.IsAccept {
+				orderItem.IsAccept = true
+				_, err = s.repo.UpdateItem(ctx, &orderItem)
+				if err != nil {
+					errCh <- err
+				}
+			}
+		}(item)
+	}
+
+	go func() {
+		wg.Done()
+		close(errCh)
+	}()
+
+	for err = range errCh {
+		if err != nil {
+			return err
 		}
 	}
 
@@ -32,15 +49,30 @@ func (s *Service) RefundItem(ctx context.Context, orderCode string, request Refu
 		return err
 	}
 
-	for _, item := range order.OrderItems {
-		if item.ProductID == request.ProductID && item.NumOfRefund == 0 && item.Quantity >= request.Quantity {
-			item.NumOfRefund = request.Quantity
-			_, err = s.repo.UpdateItem(ctx, &item)
-			if err != nil {
-				return fmt.Errorf("failed to UpdateItem err: %v", err)
-			}
+	var wg sync.WaitGroup
+	errCh := make(chan error, 0)
 
-			return nil
+	for _, item := range order.OrderItems {
+		wg.Add(1)
+		go func(orderItem entity.OrderItem) {
+			if orderItem.ProductID == request.ProductID && orderItem.Quantity >= request.Quantity {
+				orderItem.NumOfRefund = request.Quantity
+				_, err = s.repo.UpdateItem(ctx, &orderItem)
+				if err != nil {
+					errCh <- err
+				}
+			}
+		}(item)
+	}
+
+	go func() {
+		wg.Done()
+		close(errCh)
+	}()
+
+	for err = range errCh {
+		if err != nil {
+			return err
 		}
 	}
 
