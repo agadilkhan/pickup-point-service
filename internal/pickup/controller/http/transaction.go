@@ -8,13 +8,6 @@ import (
 	"strconv"
 )
 
-func (eh *EndpointHandler) initTransactionRoutes(api *gin.RouterGroup) {
-	transactions := api.Group("/transactions/")
-	{
-		transactions.GET("/:user_id/transactions")
-	}
-}
-
 func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
 	param := ctx.Param("user_id")
 	query := ctx.Query("transaction_type")
@@ -29,7 +22,7 @@ func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
 
 	err = middleware.CheckUser(ctx, userID)
 	if err != nil {
-		eh.logger.Errorf("the user does not access to resource")
+		eh.logger.Errorf("the user does not have access to resource")
 		ctx.Status(http.StatusNotFound)
 
 		return
@@ -39,7 +32,7 @@ func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
 		query,
 	}
 
-	transaction, err := eh.service.GetTransactions(ctx, userID, transactionQuery)
+	transactions, err := eh.service.GetTransactions(ctx, userID, transactionQuery)
 	if err != nil {
 		eh.logger.Errorf("failed to GetTransaction err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
@@ -47,5 +40,5 @@ func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, transaction)
+	ctx.JSON(http.StatusOK, transactions)
 }

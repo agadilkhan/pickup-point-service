@@ -1,36 +1,11 @@
 package http
 
 import (
-	"net/http"
-
+	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
-
-func (eh *EndpointHandler) initOrderRoutes(api *gin.RouterGroup) {
-	orders := api.Group("/orders")
-	{
-		orders.GET("/", eh.GetOrders)
-		orders.POST("/", eh.CreateOrder)
-		orders.GET("/:code", eh.GetOrderByCode)
-		orders.POST("/:code/pickup", eh.PickupOrder)
-		orders.POST("/:code/receive", eh.ReceiveOrder)
-	}
-}
-
-func (eh *EndpointHandler) PickupOrder(ctx *gin.Context) {
-	code := ctx.Param("code")
-
-	err := eh.service.PickupOrder(ctx, code)
-	if err != nil {
-		eh.logger.Errorf("failed to Pickup err: %v", err)
-		ctx.Status(http.StatusInternalServerError)
-
-		return
-	}
-
-	ctx.JSON(http.StatusOK, "success")
-}
 
 func (eh *EndpointHandler) CreateOrder(ctx *gin.Context) {
 	request := pickup.CreateOrderRequest{}
@@ -51,6 +26,20 @@ func (eh *EndpointHandler) CreateOrder(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, orderID)
+}
+
+func (eh *EndpointHandler) DeleteOrder(ctx *gin.Context) {
+	param := ctx.Param("order_code")
+
+	orderCode, err := eh.service.DeleteOrder(ctx, param)
+	if err != nil {
+		eh.logger.Errorf("failed to DeleteOrder err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, fmt.Sprintf("order with code %s: deleted", orderCode))
 }
 
 func (eh *EndpointHandler) GetOrders(ctx *gin.Context) {
@@ -77,7 +66,7 @@ func (eh *EndpointHandler) GetOrders(ctx *gin.Context) {
 }
 
 func (eh *EndpointHandler) GetOrderByCode(ctx *gin.Context) {
-	code := ctx.Param("code")
+	code := ctx.Param("order_code")
 
 	order, err := eh.service.GetOrderByCode(ctx, code)
 	if err != nil {
@@ -90,28 +79,24 @@ func (eh *EndpointHandler) GetOrderByCode(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, order)
 }
 
-func (eh *EndpointHandler) ReceiveOrder(ctx *gin.Context) {
-	code := ctx.Param("code")
+func (eh *EndpointHandler) PickupOrder(ctx *gin.Context) {
+	code := ctx.Param("order_code")
 
-	request := struct {
-		WarehouseID int `json:"warehouse_id"`
-		Items       []struct {
-			ProductID int `json:"product_id"`
-		} `json:"items"`
-	}{}
-
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		eh.logger.Errorf("failed to Unmarshal err: %v", err)
-		ctx.Status(http.StatusBadRequest)
+	err := eh.service.PickupOrder(ctx, code)
+	if err != nil {
+		eh.logger.Errorf("failed to Pickup err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
 
 		return
 	}
 
-	place, err := eh.service.ReceiveOrder(ctx, pickup.ReceiveOrderRequest{
-		WarehouseID: request.WarehouseID,
-		OrderCode:   code,
-		Items:       request.Items,
-	})
+	ctx.JSON(http.StatusOK, "success")
+}
+
+func (eh *EndpointHandler) ReceiveOrder(ctx *gin.Context) {
+	param := ctx.Param("order_code")
+
+	err := eh.service.ReceiveOrder(ctx, param)
 	if err != nil {
 		eh.logger.Errorf("failed to ReceiveOrder err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
@@ -119,11 +104,33 @@ func (eh *EndpointHandler) ReceiveOrder(ctx *gin.Context) {
 		return
 	}
 
-	response := struct {
-		PlaceNum int `json:"place_num"`
-	}{
-		place,
+	ctx.JSON(http.StatusOK, "success")
+}
+
+func (eh *EndpointHandler) RefundOrder(ctx *gin.Context) {
+	param := ctx.Param("order_code")
+
+	err := eh.service.RefundOrder(ctx, param)
+	if err != nil {
+		eh.logger.Errorf("failed to RefundOrder err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+
+		return
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, "success")
+}
+
+func (eh *EndpointHandler) CancelOrder(ctx *gin.Context) {
+	param := ctx.Param("order_code")
+
+	err := eh.service.CancelOrder(ctx, param)
+	if err != nil {
+		eh.logger.Errorf("failed to CancelOrder err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "canceled")
 }

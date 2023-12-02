@@ -14,3 +14,12 @@ func (s *Service) GetTransactions(ctx context.Context, userID int, query GetTran
 
 	return transactions, nil
 }
+
+func (s *Service) CreateTransaction(ctx context.Context, transaction *entity.Transaction) (int, error) {
+	id, err := s.repo.CreateTransaction(ctx, transaction)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
