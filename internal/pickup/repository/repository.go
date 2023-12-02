@@ -9,7 +9,6 @@ import (
 type Repository interface {
 	OrderRepository
 	TransactionRepository
-	//WarehouseRepository
 	ProductRepository
 	OrderItemRepository
 }
@@ -21,13 +20,6 @@ type OrderRepository interface {
 	CreateOrder(ctx context.Context, order *entity.Order) (int, error)
 	DeleteOrder(ctx context.Context, orderCode string) (string, error)
 }
-
-//type WarehouseRepository interface {
-//	GetWarehouse(ctx context.Context, pointID int) (*entity.Warehouse, error)
-//	CreateWarehouseOrder(ctx context.Context, warehouseOrder *entity.WarehouseOrder) (int, error)
-//	GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error)
-//	DeleteWarehouseOrder(ctx context.Context, orderID int) error
-//}
 
 type TransactionRepository interface {
 	CreateTransaction(ctx context.Context, transaction *entity.Transaction) (int, error)

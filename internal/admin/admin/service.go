@@ -22,7 +22,29 @@ func NewService(passwordSecretKey string, userGrpcTransport *transport.UserGrpcT
 }
 
 func (s *Service) GetUsers(ctx context.Context) (*[]entity.User, error) {
-	return nil, nil
+	resp, err := s.userGrpcTransport.GetUsers(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetUsers err: %v", err)
+	}
+
+	var users []entity.User
+	for _, u := range *resp {
+		user := entity.User{
+			ID:          int(u.Result.Id),
+			RoleID:      int(u.Result.RoleId),
+			FirstName:   u.Result.FirstName,
+			LastName:    u.Result.LastName,
+			Email:       u.Result.Email,
+			Phone:       u.Result.Phone,
+			Login:       u.Result.Login,
+			Password:    u.Result.Password,
+			IsConfirmed: u.Result.IsConfirmed,
+		}
+
+		users = append(users, user)
+	}
+
+	return &users, nil
 }
 
 func (s *Service) GetUserByID(ctx context.Context, id int) (*entity.User, error) {

@@ -3,7 +3,6 @@ package transport
 import (
 	"context"
 	"fmt"
-
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"

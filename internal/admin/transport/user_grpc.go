@@ -7,6 +7,8 @@ import (
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"io"
 )
 
 type UserGrpcTransport struct {
@@ -35,10 +37,6 @@ type UpdateUserRequest struct {
 	Phone     string
 	Login     string
 	Password  string
-}
-
-func (t *UserGrpcTransport) GetUsers(ctx context.Context) (*pb.GetUsersResponse, error) {
-	return nil, nil
 }
 
 func (t *UserGrpcTransport) GetUserByID(ctx context.Context, id int) (*pb.User, error) {
@@ -82,4 +80,37 @@ func (t *UserGrpcTransport) DeleteUser(ctx context.Context, id int) (*pb.DeleteU
 	return &pb.DeleteUserResponse{
 		Id: resp.Id,
 	}, nil
+}
+
+func (t *UserGrpcTransport) GetUsers(ctx context.Context) (*[]pb.GetUsersResponse, error) {
+	resp, err := t.client.GetUsers(ctx, &emptypb.Empty{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetUsers err: %v", err)
+	}
+
+	var users []pb.GetUsersResponse
+	for {
+		res, err := resp.Recv()
+		if err != nil {
+			if err == io.EOF {
+				return &users, nil
+			}
+		}
+
+		user := pb.GetUsersResponse{
+			Result: &pb.User{
+				Id:          res.Result.Id,
+				RoleId:      res.Result.RoleId,
+				FirstName:   res.Result.FirstName,
+				LastName:    res.Result.LastName,
+				Email:       res.Result.Email,
+				Phone:       res.Result.Phone,
+				Login:       res.Result.Login,
+				Password:    res.Result.Password,
+				IsConfirmed: res.Result.IsConfirmed,
+			},
+		}
+
+		users = append(users, user)
+	}
 }

@@ -35,7 +35,7 @@ func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 		api.POST("/orders/:order_code/receive", eh.ReceiveOrder)
 		api.POST("/orders/:order_code/items/:product_id/receive", eh.ReceiveItem)
 
-		api.POST("/orders/:order_code/cancel", eh.CancelOrder)
+		api.PUT("/orders/:order_code/cancel", eh.CancelOrder)
 
 		api.POST("/orders/:order_code/refund", eh.RefundOrder)
 		api.POST("/orders/:order_code/items/:product_id/refund", eh.RefundItem)

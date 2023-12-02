@@ -21,14 +21,6 @@ type CreateOrderRequest struct {
 	} `json:"items"`
 }
 
-type ReceiveOrderRequest struct {
-	WarehouseID int    `json:"warehouse_id"`
-	OrderCode   string `json:"order_code"`
-	Items       []struct {
-		ProductID int `json:"product_id"`
-	} `json:"items"`
-}
-
 type RefundItemRequest struct {
 	ProductID int
 	Quantity  int

@@ -29,7 +29,15 @@ func NewEndpointHandler(
 }
 
 func (h *EndpointHandler) GetUsers(ctx *gin.Context) {
+	users, err := h.service.GetUsers(ctx)
+	if err != nil {
+		h.logger.Errorf("failed to GetUsers err: %v", err)
+		ctx.Status(http.StatusInternalServerError)
 
+		return
+	}
+
+	ctx.JSON(http.StatusOK, users)
 }
 
 func (h *EndpointHandler) GetUserByID(ctx *gin.Context) {
