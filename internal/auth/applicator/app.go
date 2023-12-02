@@ -90,7 +90,7 @@ func (app *Applicator) Run() {
 
 	authService := auth.NewAuthService(repo, cfg.Auth, userGrpcTransport, userVerificationProducer, redisCli)
 
-	endPointHandler := http.NewEndpointHandler(authService, l)
+	endPointHandler := http.NewEndpointHandler(authService, l, cfg)
 
 	router := http.NewRouter(l)
 	httpConfig := cfg.HttpServer

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,15 +18,27 @@ func NewRouter(logger *zap.SugaredLogger) *router {
 	}
 }
 
-func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
+func (r *router) GetHandler(h *EndpointHandler) http.Handler {
 	rt := gin.Default()
 
 	api := rt.Group("/api/auth/v1")
 	{
-		api.POST("/register", eh.Register)
-		api.POST("/:email/user-confirm", eh.ConfirmUser)
-		api.POST("/login", eh.Login)
-		api.POST("/renew_token", eh.RenewToken)
+		user := api.Group("/user")
+		{
+			user.POST("/register", h.Register)
+			user.POST("/login", h.Login)
+			user.POST("/confirm-user", h.ConfirmUser)
+			user.POST("/renew-token", h.RenewToken)
+		}
+
+		admin := api.Group("/admin")
+		{
+			admin.Use(middleware.AuthMiddleware(h.cfg, h.logger))
+			admin.GET("/users", h.GetUsers)
+			admin.GET("/users/:user_id", h.GetUserByID)
+			admin.PUT("/users/:user_id", h.UpdateUser)
+			admin.DELETE("/users/:user_id", h.DeleteUser)
+		}
 	}
 
 	return rt

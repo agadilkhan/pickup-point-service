@@ -32,6 +32,8 @@ func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLogin
 		return nil, fmt.Errorf("GetUserByLogin err: %v", err)
 	}
 
+	s.logger.Infof("GetUserByLogin success")
+
 	return &pb.GetUserByLoginResponse{
 		Result: &pb.User{
 			Id:          int64(user.ID),
@@ -102,6 +104,8 @@ func (s *Service) ConfirmUser(ctx context.Context, request *pb.ConfirmUserReques
 		return nil, fmt.Errorf("ConfirmUser err: %v", err)
 	}
 
+	s.logger.Infof("ConfrimUser success")
+
 	return &emptypb.Empty{}, nil
 }
 
@@ -125,6 +129,8 @@ func (s *Service) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest)
 		return nil, fmt.Errorf("UpdateUser err: %v", err)
 	}
 
+	s.logger.Infof("UpdateUser success")
+
 	return &pb.UpdateUserResponse{
 		Result: &pb.User{
 			Id:          int64(user.ID),
@@ -146,6 +152,8 @@ func (s *Service) DeleteUser(ctx context.Context, request *pb.DeleteUserRequest)
 		s.logger.Errorf("failed to DeleteUser err: %v", err)
 		return nil, fmt.Errorf("DeleteUser err: %v", err)
 	}
+
+	s.logger.Infof("DeleteUser success")
 
 	return &pb.DeleteUserResponse{
 		Id: int64(id),
@@ -177,6 +185,8 @@ func (s *Service) GetUsers(empty *emptypb.Empty, stream pb.UserService_GetUsersS
 			return status.Errorf(codes.Internal, "fetch: unexpected stream: %v", err)
 		}
 	}
+
+	s.logger.Infof("GetUsers success")
 
 	return nil
 }
