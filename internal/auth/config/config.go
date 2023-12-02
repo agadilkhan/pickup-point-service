@@ -27,7 +27,7 @@ type DBNode struct {
 	Host     string `yaml:"Host"`
 	Port     string `yaml:"Port"`
 	User     string `yaml:"User"`
-	Password string `env-required:"true" env:"DB_PASSWORD"`
+	Password string `yaml:"Password"`
 	Name     string `yaml:"Name"`
 }
 

@@ -30,8 +30,8 @@ func loadConfig(path string) (config config.Config, err error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
+
 	viper.AutomaticEnv()
-	dbPass := viper.GetString("DB_PASSWORD")
 
 	err = viper.ReadInConfig()
 	if err != nil {
@@ -42,9 +42,6 @@ func loadConfig(path string) (config config.Config, err error) {
 	if err != nil {
 		return config, fmt.Errorf("failed to Unmarshal config err: %v", err)
 	}
-
-	config.Database.Main.Password = dbPass
-	config.Database.Replica.Password = dbPass
 
 	return config, err
 }
