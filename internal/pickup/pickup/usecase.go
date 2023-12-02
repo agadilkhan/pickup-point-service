@@ -33,13 +33,6 @@ type ProductUseCase interface {
 	GetProduct(ctx context.Context, id int) (*entity.Product, error)
 }
 
-//type WarehouseUseCase interface {
-//	GetWarehouseOrders(ctx context.Context, warehouseID int) (*[]entity.WarehouseOrder, error)
-//	GetWarehouse(ctx context.Context, pointID int) (*entity.Warehouse, error)
-//	DeleteWarehouseOrder(ctx context.Context, orderID int) error
-//	CreateWarehouseOrder(ctx context.Context, order *entity.WarehouseOrder) (int, error)
-//}
-
 type OrderItemUseCase interface {
 	ReceiveItem(ctx context.Context, orderCode string, productID int) error
 	RefundItem(ctx context.Context, orderCode string, request RefundItemRequest) error

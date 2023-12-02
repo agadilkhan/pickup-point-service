@@ -2,31 +2,26 @@ syntax = "proto3";
 
 package userservice;
 
+import "google/protobuf/empty.proto";
+
 option go_package = "./;pb";
 
 service UserService {
-  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse);
+  rpc GetUsers(google.protobuf.Empty) returns (stream GetUsersResponse);
   rpc GetUserByLogin(GetUserByLoginRequest) returns (GetUserByLoginResponse);
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse);
   rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
-  rpc ConfirmUser(ConfirmUserRequest) returns (ConfirmUserResponse);
+  rpc ConfirmUser(ConfirmUserRequest) returns (google.protobuf.Empty);
 }
 
 message GetUsersResponse {
-  repeated User result = 1;
-}
-
-message GetUsersRequest {
-
+  User result = 1;
 }
 
 message ConfirmUserRequest {
   string email = 1;
-}
-
-message ConfirmUserResponse {
 }
 
 message UpdateUserRequest {

@@ -2,11 +2,13 @@ package auth
 
 import (
 	"context"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 )
 
 type UseCase interface {
 	TokenUseCase
 	UserUseCase
+	AdminUseCase
 }
 
 type TokenUseCase interface {
@@ -17,4 +19,11 @@ type TokenUseCase interface {
 type UserUseCase interface {
 	Register(ctx context.Context, request CreateUserRequest) (int, error)
 	ConfirmUser(cxt context.Context, code ConfirmUserRequest) error
+}
+
+type AdminUseCase interface {
+	GetUsers(ctx context.Context) (*[]entity.User, error)
+	GetUserByID(ctx context.Context, id int) (*entity.User, error)
+	UpdateUser(ctx context.Context, request UpdateUserRequest) (*entity.User, error)
+	DeleteUser(ctx context.Context, id int) (int, error)
 }

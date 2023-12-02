@@ -7,6 +7,9 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Service struct {
@@ -28,6 +31,8 @@ func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLogin
 		s.logger.Errorf("failed to GetUserByLogin err: %v", err)
 		return nil, fmt.Errorf("GetUserByLogin err: %v", err)
 	}
+
+	s.logger.Infof("GetUserByLogin success")
 
 	return &pb.GetUserByLoginResponse{
 		Result: &pb.User{
@@ -92,14 +97,16 @@ func (s *Service) GetUserByID(ctx context.Context, request *pb.GetUserByIDReques
 	}, nil
 }
 
-func (s *Service) ConfirmUser(ctx context.Context, request *pb.ConfirmUserRequest) (*pb.ConfirmUserResponse, error) {
+func (s *Service) ConfirmUser(ctx context.Context, request *pb.ConfirmUserRequest) (*emptypb.Empty, error) {
 	err := s.repo.ConfirmUser(ctx, request.Email)
 	if err != nil {
 		s.logger.Errorf("failed to ConfirmUser err: %v", err)
 		return nil, fmt.Errorf("ConfirmUser err: %v", err)
 	}
 
-	return &pb.ConfirmUserResponse{}, nil
+	s.logger.Infof("ConfrimUser success")
+
+	return &emptypb.Empty{}, nil
 }
 
 func (s *Service) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
@@ -121,6 +128,8 @@ func (s *Service) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest)
 		s.logger.Errorf("failed to UpdateUser: %v", err)
 		return nil, fmt.Errorf("UpdateUser err: %v", err)
 	}
+
+	s.logger.Infof("UpdateUser success")
 
 	return &pb.UpdateUserResponse{
 		Result: &pb.User{
@@ -144,20 +153,40 @@ func (s *Service) DeleteUser(ctx context.Context, request *pb.DeleteUserRequest)
 		return nil, fmt.Errorf("DeleteUser err: %v", err)
 	}
 
+	s.logger.Infof("DeleteUser success")
+
 	return &pb.DeleteUserResponse{
 		Id: int64(id),
 	}, nil
 }
 
-//func (s *Service) GetUsers(ctx context.Context, request *pb.GetUsersRequest) (*pb.GetUsersResponse, error) {
-//	users, err := s.repo.GetUsers(ctx)
-//	if err != nil {
-//		s.logger.Errorf("failed to GetUsers: %v", err)
-//		return nil, fmt.Errorf("failed to GetUsers err: %v", err)
-//	}
-//
-//	for _, user := range *users {
-//
-//	}
-//
-//}
+func (s *Service) GetUsers(empty *emptypb.Empty, stream pb.UserService_GetUsersServer) error {
+	users, err := s.repo.GetUsers(context.Background())
+	if err != nil {
+		s.logger.Errorf("failed to GetUsers err: %v", err)
+		return fmt.Errorf("GetUsers err: %v", err)
+	}
+
+	for _, u := range *users {
+		user := pb.User{
+			Id:          int64(u.ID),
+			RoleId:      int64(u.RoleID),
+			FirstName:   u.FirstName,
+			LastName:    u.LastName,
+			Email:       u.Email,
+			Phone:       u.Phone,
+			Login:       u.Login,
+			Password:    u.Password,
+			IsConfirmed: u.IsConfirmed,
+		}
+		if err = stream.Send(&pb.GetUsersResponse{
+			Result: &user,
+		}); err != nil {
+			return status.Errorf(codes.Internal, "fetch: unexpected stream: %v", err)
+		}
+	}
+
+	s.logger.Infof("GetUsers success")
+
+	return nil
+}

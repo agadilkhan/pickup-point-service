@@ -87,9 +87,6 @@
         }
       }
     },
-    "userserviceConfirmUserResponse": {
-      "type": "object"
-    },
     "userserviceCreateUserResponse": {
       "type": "object",
       "properties": {
@@ -136,11 +133,7 @@
       "type": "object",
       "properties": {
         "result": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/userserviceUser"
-          }
+          "$ref": "#/definitions/userserviceUser"
         }
       }
     },
@@ -182,6 +175,9 @@
           "type": "string"
         },
         "isConfirmed": {
+          "type": "boolean"
+        },
+        "isDeleted": {
           "type": "boolean"
         }
       }
