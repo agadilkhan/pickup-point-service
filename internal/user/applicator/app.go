@@ -2,9 +2,11 @@ package applicator
 
 import (
 	"context"
+	"github.com/agadilkhan/pickup-point-service/internal/user/memory"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/agadilkhan/pickup-point-service/internal/user/config"
 	"github.com/agadilkhan/pickup-point-service/internal/user/controller/grpc"
@@ -63,7 +65,11 @@ func (app *Applicator) Run() {
 	repo := repository.NewRepository(mainDB, replicaDB)
 	_ = repo
 
-	grpcService := grpc.NewService(l, repo)
+	userMemory := memory.NewUserMemory(l, repo, time.Minute)
+
+	go userMemory.Run(ctx)
+
+	grpcService := grpc.NewService(l, repo, userMemory)
 	grpcServer := grpc.NewServer(cfg.GrpcServer.Port, grpcService, l)
 	err = grpcServer.Start()
 	if err != nil {

@@ -3,6 +3,8 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"github.com/agadilkhan/pickup-point-service/internal/user/memory"
+
 	"github.com/agadilkhan/pickup-point-service/internal/user/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
@@ -14,22 +16,33 @@ import (
 
 type Service struct {
 	pb.UnimplementedUserServiceServer
-	logger *zap.SugaredLogger
-	repo   repository.Repository
+	logger     *zap.SugaredLogger
+	repo       repository.Repository
+	userMemory *memory.UserMemory
 }
 
-func NewService(logger *zap.SugaredLogger, repo repository.Repository) *Service {
+func NewService(logger *zap.SugaredLogger, repo repository.Repository, userMemory *memory.UserMemory) *Service {
 	return &Service{
-		logger: logger,
-		repo:   repo,
+		logger:     logger,
+		repo:       repo,
+		userMemory: userMemory,
 	}
 }
 
 func (s *Service) GetUserByLogin(ctx context.Context, request *pb.GetUserByLoginRequest) (*pb.GetUserByLoginResponse, error) {
-	user, err := s.repo.GetUserByLogin(ctx, request.Login)
-	if err != nil {
-		s.logger.Errorf("failed to GetUserByLogin err: %v", err)
-		return nil, fmt.Errorf("GetUserByLogin err: %v", err)
+	var user *entity.User
+
+	memoryUser := s.userMemory.GetUserByLogin(request.Login)
+	if memoryUser != nil {
+		user = memoryUser
+	} else {
+		repoUser, err := s.repo.GetUserByLogin(ctx, request.Login)
+		if err != nil {
+			s.logger.Errorf("GetUserByLogin err: %v", err)
+			return nil, fmt.Errorf("failed to GetUserByLogin err: %v", err)
+		}
+
+		user = repoUser
 	}
 
 	s.logger.Infof("GetUserByLogin success")
