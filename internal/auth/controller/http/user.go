@@ -1,10 +1,11 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 func (h *EndpointHandler) Login(ctx *gin.Context) {
@@ -12,7 +13,7 @@ func (h *EndpointHandler) Login(ctx *gin.Context) {
 		zap.String("endpoint", "login"),
 		zap.String("params", ctx.FullPath()),
 	)
-
+	
 	request := struct {
 		Login    string `json:"login"`
 		Password string `json:"password"`

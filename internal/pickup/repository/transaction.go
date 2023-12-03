@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/metrics"
+
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 	"gorm.io/gorm"
 )
@@ -31,6 +33,9 @@ func (r *Repo) CreateTransaction(ctx context.Context, transaction *entity.Transa
 }
 
 func (r *Repo) GetTransactions(ctx context.Context, userID int, transactionType string) (*[]entity.Transaction, error) {
+	ok, fail := metrics.DatabaseQueryTime("GetTransactions")
+	defer fail()
+
 	var resTransactions = make([]entity.Transaction, 0)
 	var transactions []entity.Transaction
 
@@ -99,6 +104,8 @@ func (r *Repo) GetTransactions(ctx context.Context, userID int, transactionType 
 
 		resTransactions = append(resTransactions, transaction)
 	}
+
+	ok()
 
 	return &resTransactions, nil
 }

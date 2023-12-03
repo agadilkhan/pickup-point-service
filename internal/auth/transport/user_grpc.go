@@ -3,12 +3,13 @@ package transport
 import (
 	"context"
 	"fmt"
+	"io"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	pb "github.com/agadilkhan/pickup-point-service/pkg/protobuf/userservice/gw"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"io"
 )
 
 type UserGrpcTransport struct {

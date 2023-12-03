@@ -2,8 +2,11 @@ package middleware
 
 import (
 	"fmt"
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/metrics"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 
 	"go.uber.org/zap"
 
@@ -81,4 +84,19 @@ func CheckUser(ctx *gin.Context, requestUser int) error {
 	}
 
 	return nil
+}
+
+func MetricsHandler() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		start := time.Now()
+
+		ctx.Next()
+
+		path := ctx.Request.URL.Path
+
+		statusString := strconv.Itoa(ctx.Writer.Status())
+
+		metrics.HttpResponseTime.WithLabelValues(path, statusString, ctx.Request.Method).Observe(time.Since(start).Seconds())
+		metrics.HttpRequestTotalCollector.WithLabelValues(path, statusString, ctx.Request.Method).Inc()
+	}
 }

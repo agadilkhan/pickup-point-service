@@ -3,9 +3,10 @@ package auth
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 	"github.com/golang-jwt/jwt/v5"
-	"time"
 )
 
 func (s *Service) GenerateToken(ctx context.Context, request GenerateTokenRequest) (*JWTUserToken, error) {

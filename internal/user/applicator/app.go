@@ -20,7 +20,7 @@ type Applicator struct {
 	cfg    *config.Config
 }
 
-func NewAplicator(logger *zap.SugaredLogger, cfg *config.Config) *Applicator {
+func NewApplicator(logger *zap.SugaredLogger, cfg *config.Config) *Applicator {
 	return &Applicator{
 		logger,
 		cfg,
@@ -67,7 +67,7 @@ func (app *Applicator) Run() {
 
 	userMemory := memory.NewUserMemory(l, repo, time.Minute)
 
-	go userMemory.Run(ctx)
+	userMemory.Run(ctx)
 
 	grpcService := grpc.NewService(l, repo, userMemory)
 	grpcServer := grpc.NewServer(cfg.GrpcServer.Port, grpcService, l)
@@ -75,6 +75,7 @@ func (app *Applicator) Run() {
 	if err != nil {
 		l.Panicf("failed to start grpc server err: %v", err)
 	}
+	l.Infof("grpc server started on port %s", cfg.Port)
 
 	defer grpcServer.Close()
 

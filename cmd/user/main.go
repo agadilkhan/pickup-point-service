@@ -22,7 +22,7 @@ func main() {
 		l.Fatalf("failed to load config err: %v", err)
 	}
 
-	app := applicator.NewAplicator(l, &cfg)
+	app := applicator.NewApplicator(l, &cfg)
 	app.Run()
 }
 

@@ -2,9 +2,10 @@ package http
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func (eh *EndpointHandler) CreateOrder(ctx *gin.Context) {

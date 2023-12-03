@@ -27,25 +27,27 @@ func NewUserMemory(logger *zap.SugaredLogger, repo repository.Repository, interv
 }
 
 func (um *UserMemory) Run(ctx context.Context) {
-	ticker := time.NewTimer(um.interval)
-	defer ticker.Stop()
+	go func() {
+		ticker := time.NewTimer(um.interval)
+		defer ticker.Stop()
 
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case <-ticker.C:
-			startTime := time.Now()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				startTime := time.Now()
 
-			um.LoadData(ctx)
+				um.LoadData(ctx)
 
-			elapsedTime := time.Since(startTime)
+				elapsedTime := time.Since(startTime)
 
-			timeToNextTick := um.interval - elapsedTime
+				timeToNextTick := um.interval - elapsedTime
 
-			time.Sleep(timeToNextTick)
+				time.Sleep(timeToNextTick)
+			}
 		}
-	}
+	}()
 }
 
 func (um *UserMemory) LoadData(ctx context.Context) {
@@ -58,7 +60,7 @@ func (um *UserMemory) LoadData(ctx context.Context) {
 		return
 	}
 
-	newUsers := make(map[string]entity.User, 0)
+	newUsers := make(map[string]entity.User)
 	for _, user := range *users {
 		newUsers[user.Login] = user
 	}

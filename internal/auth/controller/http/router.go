@@ -1,8 +1,9 @@
 package http
 
 import (
-	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/middleware"
 	"net/http"
+
+	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/middleware"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -27,7 +28,7 @@ func (r *router) GetHandler(h *EndpointHandler) http.Handler {
 		{
 			user.POST("/register", h.Register)
 			user.POST("/login", h.Login)
-			user.POST("/confirm-user", h.ConfirmUser)
+			user.POST("/:email/confirm-user", h.ConfirmUser)
 			user.POST("/renew-token", h.RenewToken)
 		}
 

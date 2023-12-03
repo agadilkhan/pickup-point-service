@@ -37,7 +37,7 @@ func (c *UserVerificationCallback) Callback(message <-chan *sarama.ConsumerMessa
 
 				err = c.redisCli.Set(context.Background(), userCode.Email, userCode.Code, 10*time.Minute).Err()
 				if err != nil {
-					c.logger.Errorf("failed to save record value in cache err: %v", err)
+					c.logger.Errorf("failed to save record value in memory err: %v", err)
 				}
 			}
 		case err := <-error:

@@ -6,9 +6,10 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
-	"math/rand"
 )
 
 func (s *Service) Register(ctx context.Context, request CreateUserRequest) (int, error) {

@@ -1,11 +1,12 @@
 package http
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/middleware"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"strconv"
 )
 
 func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {

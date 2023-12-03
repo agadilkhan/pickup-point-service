@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 )
 

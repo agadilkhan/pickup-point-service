@@ -3,8 +3,9 @@ package pickup
 import (
 	"context"
 	"fmt"
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 	"sync"
+
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 )
 
 func (s *Service) ReceiveItem(ctx context.Context, orderCode string, productID int) error {

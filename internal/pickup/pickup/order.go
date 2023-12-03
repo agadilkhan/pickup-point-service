@@ -3,9 +3,10 @@ package pickup
 import (
 	"context"
 	"fmt"
-	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 	"math/rand"
 	"sync"
+
+	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 )
 
 func (s *Service) GetOrders(ctx context.Context, query GetOrdersQuery) (*[]entity.Order, error) {
@@ -147,10 +148,6 @@ func (s *Service) ReceiveOrder(ctx context.Context, orderCode string) error {
 		return err
 	}
 
-	if order.Status != entity.OrderStatusProcessing {
-		return fmt.Errorf("order is not ready to receive")
-	}
-
 	var wg sync.WaitGroup
 	errCh := make(chan error, len(order.OrderItems))
 
@@ -197,9 +194,6 @@ func (s *Service) CancelOrder(ctx context.Context, orderCode string) error {
 	if err != nil {
 		return err
 	}
-	if order.Status == entity.OrderStatusCancelled {
-		return fmt.Errorf("order is already cancelled")
-	}
 
 	order.Status = entity.OrderStatusCancelled
 
@@ -222,9 +216,6 @@ func (s *Service) RefundOrder(ctx context.Context, orderCode string) error {
 	order, err := s.GetOrderByCode(ctx, orderCode)
 	if err != nil {
 		return err
-	}
-	if order.Status == entity.OrderStatusRefund {
-		return fmt.Errorf("order is already refund")
 	}
 
 	var wg sync.WaitGroup

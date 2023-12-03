@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"fmt"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
 )

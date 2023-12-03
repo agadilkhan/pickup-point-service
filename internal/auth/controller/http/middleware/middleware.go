@@ -2,12 +2,13 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"go.uber.org/zap"
-	"net/http"
-	"strings"
 )
 
 func AuthMiddleware(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFunc {

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/middleware"
@@ -21,7 +22,12 @@ func NewRouter(logger *zap.SugaredLogger) *router {
 func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 	rt := gin.Default()
 
+	rt.Use(middleware.MetricsHandler())
+
+	rt.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
 	rt.Use(middleware.JWTVerify(eh.cfg, eh.logger))
+
 	api := rt.Group("/api/pickup/v1")
 	{
 		api.POST("/orders", eh.CreateOrder)

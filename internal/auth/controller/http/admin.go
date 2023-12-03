@@ -2,10 +2,11 @@ package http
 
 import (
 	"fmt"
-	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
+	"github.com/gin-gonic/gin"
 )
 
 func (h *EndpointHandler) GetUsers(ctx *gin.Context) {
