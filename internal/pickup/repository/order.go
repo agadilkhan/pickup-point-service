@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
+	"github.com/agadilkhan/pickup-point-service/pkg/pagination"
 )
 
 func (r *Repo) GetOrderByCode(ctx context.Context, code string) (*entity.Order, error) {
@@ -63,11 +63,18 @@ func (r *Repo) GetOrderByCode(ctx context.Context, code string) (*entity.Order, 
 	return &order, nil
 }
 
-func (r *Repo) GetOrders(ctx context.Context, sort, direction string) (*[]entity.Order, error) {
+func (r *Repo) GetOrders(ctx context.Context, sortOptions pagination.SortOptions, filterOptions pagination.FilterOptions) (*[]entity.Order, error) {
 	var result = make([]entity.Order, 0)
 	var orders []entity.Order
 
-	res := r.replica.DB.WithContext(ctx).Order(fmt.Sprintf("%s %s", sort, direction)).Find(&orders)
+	for _, field := range filterOptions.Fields {
+		res := r.replica.DB.WithContext(ctx).Where(field.GetQuery())
+		if res.Error != nil {
+			return nil, res.Error
+		}
+	}
+
+	res := r.replica.DB.WithContext(ctx).Order(sortOptions.GetOrderBy()).Find(&orders)
 	if res.Error != nil {
 		return nil, res.Error
 	}
