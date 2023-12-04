@@ -9,6 +9,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// swagger:route GET /v1/{user_id}/transactions Transactions
+//
+//				Consumes:
+//				- application/json
+//
+//				Produces:
+//				- application/json
+//
+//				Schemes: http, https
+//
+//				Parameters:
+//					+ name: user_id
+//					in: path
+//					+ name: transaction_type
+//		         in: query
+//
+//					Security:
+//					  Bearer:
+//
+//				Responses:
+//			 200: ResponseOK
+//			 400:
+//	      404:
+//			 500:
 func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
 	param := ctx.Param("user_id")
 	query := ctx.Query("transaction_type")
@@ -41,5 +65,7 @@ func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, transactions)
+	ctx.JSON(http.StatusOK, responseOK{
+		Data: transactions,
+	})
 }

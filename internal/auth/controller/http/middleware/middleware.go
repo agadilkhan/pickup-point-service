@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func AuthMiddleware(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFunc {
+func AdminMiddleware(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var tokenString string
 		tokenHeader := ctx.Request.Header.Get("Authorization")
@@ -69,16 +69,6 @@ func AuthMiddleware(cfg *config.Config, logger *zap.SugaredLogger) gin.HandlerFu
 
 			return
 		}
-
-		userID, ok := claims["user_id"].(float64)
-		if !ok {
-			logger.Errorf("user_id could not parsed from jwt")
-			ctx.AbortWithStatus(http.StatusBadRequest)
-
-			return
-		}
-
-		ctx.Set("user_id", userID)
 
 		ctx.Next()
 	}

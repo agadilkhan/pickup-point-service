@@ -1,0 +1,541 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "Pickup-service API.",
+    "version": "0.0.1"
+  },
+  "basePath": "/api/pickup",
+  "paths": {
+    "/v1/orders/": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "CreateOrder",
+        "parameters": [
+          {
+            "name": "CreateOrderRequest",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/CreateOrderRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "ResponseCreated",
+            "schema": {
+              "$ref": "#/definitions/ResponseCreated"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_code}": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "GetOrderByCode",
+        "parameters": [
+          {
+            "name": "order_code",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseOK",
+            "schema": {
+              "$ref": "#/definitions/ResponseOK"
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "DeleteOrder",
+        "parameters": [
+          {
+            "name": "order_code",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseMessage",
+            "schema": {
+              "$ref": "#/definitions/ResponseMessage"
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_code}/cancel": {
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "CancelOrder",
+        "parameters": [
+          {
+            "name": "order_code",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseMessage",
+            "schema": {
+              "$ref": "#/definitions/ResponseMessage"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_code}/items/{product_id}/receive": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "ReceiveItem",
+        "parameters": [
+          {
+            "name": "order_code",
+            "in": "path"
+          },
+          {
+            "name": "product_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseMessage",
+            "schema": {
+              "$ref": "#/definitions/ResponseMessage"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_code}/items/{product_id}/refund": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "RefundItem",
+        "parameters": [
+          {
+            "name": "order_code",
+            "in": "path"
+          },
+          {
+            "name": "product_id",
+            "in": "path"
+          },
+          {
+            "name": "Refund item request",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/RefundItemRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseMessage",
+            "schema": {
+              "$ref": "#/definitions/ResponseMessage"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_code}/pickup": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "PickupOrder",
+        "parameters": [
+          {
+            "name": "order_code",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseMessage",
+            "schema": {
+              "$ref": "#/definitions/ResponseMessage"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_code}/receive": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "ReceiveOrder",
+        "parameters": [
+          {
+            "name": "order_code",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseMessage",
+            "schema": {
+              "$ref": "#/definitions/ResponseMessage"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/orders/{order_code}/refund": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "RefundOrder",
+        "parameters": [
+          {
+            "name": "order_code",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseMessage",
+            "schema": {
+              "$ref": "#/definitions/ResponseMessage"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/{user_id}/transactions": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "Transactions",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path"
+          },
+          {
+            "name": "transaction_type",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseOK",
+            "schema": {
+              "$ref": "#/definitions/ResponseOK"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "404": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CreateOrderRequest": {
+      "type": "object",
+      "properties": {
+        "company_id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CompanyID"
+        },
+        "customer_id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CustomerID"
+        },
+        "is_paid": {
+          "type": "boolean",
+          "x-go-name": "IsPaid"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "product_id": {
+                "type": "integer",
+                "format": "int64",
+                "x-go-name": "ProductID"
+              },
+              "quantity": {
+                "type": "integer",
+                "format": "int64",
+                "x-go-name": "Quantity"
+              }
+            }
+          },
+          "x-go-name": "Items"
+        },
+        "point_id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "PointID"
+        },
+        "status": {
+          "$ref": "#/definitions/OrderStatus"
+        }
+      },
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+    },
+    "OrderStatus": {
+      "type": "string",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
+    },
+    "RefundItemRequest": {
+      "type": "object",
+      "properties": {
+        "quantity": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Quantity"
+        }
+      },
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+    },
+    "ResponseCreated": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        }
+      },
+      "x-go-name": "responseCreated",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+    },
+    "ResponseMessage": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        }
+      },
+      "x-go-name": "responseMessage",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+    },
+    "ResponseOK": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "x-go-name": "Data",
+          "example": "any"
+        }
+      },
+      "x-go-name": "responseOK",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

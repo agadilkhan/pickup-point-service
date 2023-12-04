@@ -1,6 +1,6 @@
 module github.com/agadilkhan/pickup-point-service
 
-go 1.21.3
+go 1.20
 
 require (
 	github.com/IBM/sarama v1.42.1

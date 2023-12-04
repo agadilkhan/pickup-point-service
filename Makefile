@@ -2,7 +2,7 @@
 TOOLS = ./tools
 TOOLS_BIN = $(TOOLS)/bin
 
-generate-swagger-user:
+generate-swagger-auth:
 	go generate ./...
 	docker run --rm -it  \
 		-u $(shell id -u):$(shell id -g) \
@@ -11,11 +11,25 @@ generate-swagger-user:
 		-v $(HOME):$(HOME) \
 		-w $(shell pwd) \
 		quay.io/goswagger/swagger:0.30.4 \
-		generate spec -c ./cmd/user --scan-models -c ./internal/user -o ./swagger/OpenAPI/user.rest.swagger.json
+		generate spec -c ./cmd/auth --scan-models -c ./internal/auth -o ./swagger/OpenAPI/auth/rest.swagger.json
 
-generate-user-swagger:
-	swagger generate spec --scan-models -c ./internal/user -c ./cmd/user -o ./swagger/OpenAPI/user.rest.swagger.json
 
+generate-auth-swagger:
+	swagger generate spec --scan-models -c ./internal/auth -c ./cmd/auth -o ./swagger/OpenAPI/auth/rest.swagger.json
+
+generate-swagger-pickup:
+	go generate ./...
+	docker run --rm -it  \
+		-u $(shell id -u):$(shell id -g) \
+		-e GOPATH=$(shell go env GOPATH):/go \
+		-e GOCACHE=/tmp \
+		-v $(HOME):$(HOME) \
+		-w $(shell pwd) \
+		quay.io/goswagger/swagger:0.30.4 \
+		generate spec -c ./cmd/pickup --scan-models -c ./internal/pickup -o ./swagger/OpenAPI/pickup/rest.swagger.json
+
+generate-pickup-swagger:
+	swagger generate spec --scan-models -c ./internal/pickup -c ./cmd/pickup -o ./pickup/OpenAPI/pickup/rest.swagger.json
 
 .PHONY: fix-lint
 fix-lint: $(TOOLS_BIN)/golangci-lint

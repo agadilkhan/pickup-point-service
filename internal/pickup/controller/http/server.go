@@ -79,7 +79,7 @@ func (s *server) Run() {
 
 	go func() {
 		s.isReady = true
-		s.logger.Infof("[%s] HTTP server is run")
+		s.logger.Infof("[%s] HTTP server is run", s.listener.Addr().String())
 
 		if err := s.client.Serve(s.listener); err != nil {
 			s.isReady = false

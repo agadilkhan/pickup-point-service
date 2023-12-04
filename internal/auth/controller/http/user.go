@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
@@ -8,12 +9,32 @@ import (
 	"go.uber.org/zap"
 )
 
+// swagger:route POST /v1/user/login Login
+//
+//				Parameters:
+//				 + name: GenerateToken
+//	           in: body
+//				type: GenerateToken
+//
+//				Consumes:
+//				- application/json
+//
+//				Produces:
+//				- application/json
+//
+//				Schemes: http, https
+//
+//
+//				Responses:
+//				  200: UserToken
+//			   400:
+//			   500:
 func (h *EndpointHandler) Login(ctx *gin.Context) {
 	logger := h.logger.With(
 		zap.String("endpoint", "login"),
 		zap.String("params", ctx.FullPath()),
 	)
-	
+
 	request := struct {
 		Login    string `json:"login"`
 		Password string `json:"password"`
@@ -48,6 +69,26 @@ func (h *EndpointHandler) Login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+//			swagger:route POST /v1/user/register Register
+//
+//			Parameters:
+//			 + name: RegisterUser
+//			   in: body
+//	 		type: RegisterUser
+//
+//			Consumes:
+//			- application/json
+//
+//			Produces:
+//			- application/json
+//
+//			Schemes: http, https
+//
+//
+//			Responses:
+//			  201: ResponseCreated
+//		   	  400:
+//		   	  500:
 func (h *EndpointHandler) Register(ctx *gin.Context) {
 	logger := h.logger.With(
 		zap.String("endpoint", "register"),
@@ -66,6 +107,7 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Errorf("failed to Unmarshal err: %v", err)
 		ctx.Status(http.StatusBadRequest)
+
 		return
 	}
 
@@ -82,12 +124,35 @@ func (h *EndpointHandler) Register(ctx *gin.Context) {
 	if err != nil {
 		logger.Errorf("failed to Register err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
+
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, userID)
+	ctx.JSON(http.StatusCreated, responseCreated{
+		ID: userID,
+	})
 }
 
+//			swagger:route POST /v1/user/renew-token RenewToken
+//
+//			Parameters:
+//			+ name: RefreshToken
+//			in: body
+//	     		type: RefreshToken
+//
+//			Consumes:
+//			- application/json
+//
+//			Produces:
+//			- application/json
+//
+//			Schemes: http, https
+//
+//
+//			Responses:
+//			  200: UserToken
+//		   	  400:
+//		   	  500:
 func (h *EndpointHandler) RenewToken(ctx *gin.Context) {
 	logger := h.logger.With(
 		zap.String("endpoint", "renew_token"),
@@ -121,9 +186,33 @@ func (h *EndpointHandler) RenewToken(ctx *gin.Context) {
 		jwtToken.RefreshToken,
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, responseOK{
+		response,
+	})
 }
 
+// swagger:route POST /v1/user/{email}/confirm-user ConfirmUser
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Parameters:
+//		 + name: email
+//		   in: path
+//		+ name: ConfirmUserRequest
+//			in: body
+//			type: ConfirmUserRequest
+//
+//
+//		Responses:
+//	 200: ResponseMessage
+//	 400:
+//	 500:
 func (h *EndpointHandler) ConfirmUser(ctx *gin.Context) {
 	logger := h.logger.With(
 		zap.String("endpoint", "renew_token"),
@@ -156,5 +245,7 @@ func (h *EndpointHandler) ConfirmUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "success")
+	ctx.JSON(http.StatusOK, responseMessage{
+		Message: fmt.Sprintf("user with email %s: confirmed", email),
+	})
 }

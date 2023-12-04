@@ -1,3 +1,19 @@
+// Auth-service API.
+//
+//	Schemes: http, https
+//	BasePath: /api/auth
+//	Version: 0.0.1
+//
+//	Consumes:
+//	- application/json
+//
+//		SecurityDefinitions:
+//		  Bearer:
+//		    type: apiKey
+//		    name: Authorization
+//		    in: header
+//
+// swagger:meta
 package main
 
 import (

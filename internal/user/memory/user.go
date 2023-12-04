@@ -42,9 +42,7 @@ func (um *UserMemory) Run(ctx context.Context) {
 
 				elapsedTime := time.Since(startTime)
 
-				timeToNextTick := um.interval - elapsedTime
-
-				time.Sleep(timeToNextTick)
+				ticker.Reset(um.interval - elapsedTime)
 			}
 		}
 	}()
@@ -77,6 +75,8 @@ func (um *UserMemory) GetUserByLogin(login string) *entity.User {
 		um.logger.Errorf("failed to get user by login from memory")
 		return nil
 	}
+
+	um.logger.Info("get user by login from memory success")
 
 	return &user
 }

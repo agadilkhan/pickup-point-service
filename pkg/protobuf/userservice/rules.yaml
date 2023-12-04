@@ -3,6 +3,20 @@ config_version: 3
 
 http:
   rules:
-    - selector: userservice.UserService.GetUserByLogin
-      post: "/grpc/v1/getUserByLogin"
+    - selector: userservice.UserService.CreateUser
+      post: "/grpc/v1/createUser"
       body: "*"
+    - selector: userservice.UserService.ConfirmUser
+      post: "/grpc/v1/confirmUser"
+      body: "*"
+    - selector: userservice.UserService.GetUserByLogin
+      get: "/grpc/v1/getUserByLogin"
+    - selector: userservice.UserService.GetUsers
+      get: "/grpc/v1/getUsers"
+    - selector: userservice.UserService.UpdateUser
+      put: "/grpc/v1/updateUser"
+      body: "*"
+    - selector: userservice.UserService.DeleteUser
+      delete: "/grpc/v1/deleteUser"
+    - selector: userservice.UserService.GetUserByID
+      get: "/grpc/v1/getUserByID"

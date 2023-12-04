@@ -8,6 +8,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// swagger:route POST /v1/orders/ CreateOrder
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Parameters:
+//		+ name: CreateOrderRequest
+//			in: body
+//			type: CreateOrderRequest
+//
+//			Security:
+//			  Bearer:
+//
+//		Responses:
+//	 201: ResponseCreated
+//	 400:
+//	 500:
 func (eh *EndpointHandler) CreateOrder(ctx *gin.Context) {
 	request := pickup.CreateOrderRequest{}
 
@@ -26,9 +48,31 @@ func (eh *EndpointHandler) CreateOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, orderID)
+	ctx.JSON(http.StatusCreated, responseCreated{
+		ID: orderID,
+	})
 }
 
+// swagger:route DELETE /v1/orders/{order_code} DeleteOrder
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Parameters:
+//			+ name: order_code
+//			in: path
+//
+//			Security:
+//			  Bearer:
+//
+//		Responses:
+//	 200: ResponseMessage
+//	 500:
 func (eh *EndpointHandler) DeleteOrder(ctx *gin.Context) {
 	param := ctx.Param("order_code")
 
@@ -40,7 +84,9 @@ func (eh *EndpointHandler) DeleteOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, fmt.Sprintf("order with code %s: deleted", orderCode))
+	ctx.JSON(http.StatusOK, responseMessage{
+		Message: fmt.Sprintf("order with code %s: deleted", orderCode),
+	})
 }
 
 func (eh *EndpointHandler) GetOrders(ctx *gin.Context) {
@@ -66,6 +112,26 @@ func (eh *EndpointHandler) GetOrders(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, orders)
 }
 
+// swagger:route GET /v1/orders/{order_code} GetOrderByCode
+//
+//			Consumes:
+//			- application/json
+//
+//			Produces:
+//			- application/json
+//
+//			Schemes: http, https
+//
+//			Parameters:
+//				+ name: order_code
+//				in: path
+//
+//			Security:
+//			  Bearer:
+//
+//			Responses:
+//		 200: ResponseOK
+//	  500:
 func (eh *EndpointHandler) GetOrderByCode(ctx *gin.Context) {
 	code := ctx.Param("order_code")
 
@@ -77,9 +143,32 @@ func (eh *EndpointHandler) GetOrderByCode(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, order)
+	ctx.JSON(http.StatusOK, responseOK{
+		Data: order,
+	})
 }
 
+// swagger:route POST /v1/orders/{order_code}/pickup PickupOrder
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Parameters:
+//			+ name: order_code
+//			in: path
+//
+//			Security:
+//			  Bearer:
+//
+//		Responses:
+//	 200: ResponseMessage
+//	 400:
+//	 500:
 func (eh *EndpointHandler) PickupOrder(ctx *gin.Context) {
 	code := ctx.Param("order_code")
 
@@ -91,9 +180,32 @@ func (eh *EndpointHandler) PickupOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "success")
+	ctx.JSON(http.StatusOK, responseMessage{
+		Message: fmt.Sprintf("order with code %s: issued", code),
+	})
 }
 
+// swagger:route POST /v1/orders/{order_code}/receive ReceiveOrder
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Parameters:
+//			+ name: order_code
+//			in: path
+//
+//			Security:
+//			  Bearer:
+//
+//		Responses:
+//	 200: ResponseMessage
+//	 400:
+//	 500:
 func (eh *EndpointHandler) ReceiveOrder(ctx *gin.Context) {
 	param := ctx.Param("order_code")
 
@@ -105,9 +217,32 @@ func (eh *EndpointHandler) ReceiveOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "success")
+	ctx.JSON(http.StatusOK, responseMessage{
+		Message: fmt.Sprintf("order with code %s: received", param),
+	})
 }
 
+// swagger:route POST /v1/orders/{order_code}/refund RefundOrder
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Parameters:
+//			+ name: order_code
+//			in: path
+//
+//			Security:
+//			  Bearer:
+//
+//		Responses:
+//	 200: ResponseMessage
+//	 400:
+//	 500:
 func (eh *EndpointHandler) RefundOrder(ctx *gin.Context) {
 	param := ctx.Param("order_code")
 
@@ -119,9 +254,32 @@ func (eh *EndpointHandler) RefundOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "success")
+	ctx.JSON(http.StatusOK, responseMessage{
+		Message: fmt.Sprintf("order with code %s: returned", param),
+	})
 }
 
+// swagger:route PUT /v1/orders/{order_code}/cancel CancelOrder
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Parameters:
+//			+ name: order_code
+//			in: path
+//
+//			Security:
+//			  Bearer:
+//
+//		Responses:
+//	 200: ResponseMessage
+//	 400:
+//	 500:
 func (eh *EndpointHandler) CancelOrder(ctx *gin.Context) {
 	param := ctx.Param("order_code")
 
@@ -133,5 +291,7 @@ func (eh *EndpointHandler) CancelOrder(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "canceled")
+	ctx.JSON(http.StatusOK, responseMessage{
+		Message: fmt.Sprintf("order with code %s: cancelled", param),
+	})
 }

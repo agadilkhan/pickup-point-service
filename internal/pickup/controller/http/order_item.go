@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -8,6 +9,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// swagger:route POST /v1/orders/{order_code}/items/{product_id}/refund RefundItem
+//
+//			Consumes:
+//			- application/json
+//
+//			Produces:
+//			- application/json
+//
+//			Schemes: http, https
+//
+//			Parameters:
+//				+ name: order_code
+//				in: path
+//				+ name: product_id
+//	         in: path
+//				+ name: Refund item request
+//				in: body
+//	         type: RefundItemRequest
+//
+//				Security:
+//				  Bearer:
+//
+//			Responses:
+//		 200: ResponseMessage
+//		 400:
+//		 500:
 func (eh *EndpointHandler) RefundItem(ctx *gin.Context) {
 	params := ctx.Params
 
@@ -57,9 +84,34 @@ func (eh *EndpointHandler) RefundItem(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "success")
+	ctx.JSON(http.StatusOK, responseMessage{
+		Message: fmt.Sprintf("%d item with product_id %s: returned", request.Quantity, productID),
+	})
 }
 
+// swagger:route POST /v1/orders/{order_code}/items/{product_id}/receive ReceiveItem
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Parameters:
+//			+ name: order_code
+//			in: path
+//			+ name: product_id
+//			in: path
+//
+//			Security:
+//			  Bearer:
+//
+//		Responses:
+//	 200: ResponseMessage
+//	 400:
+//	 500:
 func (eh *EndpointHandler) ReceiveItem(ctx *gin.Context) {
 	params := ctx.Params
 
@@ -95,5 +147,7 @@ func (eh *EndpointHandler) ReceiveItem(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "success")
+	ctx.JSON(http.StatusOK, responseMessage{
+		Message: fmt.Sprintf("item with product_id %s: received", productID),
+	})
 }

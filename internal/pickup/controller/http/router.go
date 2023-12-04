@@ -24,16 +24,19 @@ func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 
 	rt.Use(middleware.MetricsHandler())
 
+	// metrics
 	rt.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	rt.Use(middleware.JWTVerify(eh.cfg, eh.logger))
+
+	// swagger
+	rt.GET("/swagger/*any", gin.WrapH(eh.Swagger()))
 
 	api := rt.Group("/api/pickup/v1")
 	{
 		api.POST("/orders", eh.CreateOrder)
 		api.GET("/orders", eh.GetOrders)
 		api.GET("/orders/:order_code", eh.GetOrderByCode)
-		api.PUT("/orders/:order_code")
 		api.DELETE("/orders/:order_code", eh.DeleteOrder)
 
 		api.POST("/orders/:order_code/pickup", eh.PickupOrder)

@@ -9,6 +9,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//	swagger:route GET /v1/admin/users/ GetUsers
+//
+//
+//	Consumes:
+//	- application/json
+//
+//	Produces:
+//	- application/json
+//
+//	Schemes: http, https
+//
+// Security:
+//
+//	  Bearer:
+//
+//		Responses:
+//		  200: ResponseOK
+//	   	  400:
+//	   	  500:
 func (h *EndpointHandler) GetUsers(ctx *gin.Context) {
 	users, err := h.authService.GetUsers(ctx)
 	if err != nil {
@@ -18,9 +37,32 @@ func (h *EndpointHandler) GetUsers(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, users)
+	ctx.JSON(http.StatusOK, responseOK{
+		Data: users,
+	})
 }
 
+// swagger:route GET /v1/admin/users/{id} GetUserByID
+//
+//		Parameters:
+//		 + name: id
+//		   in: path
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Security:
+//		  Bearer:
+//
+//		Responses:
+//		  200: ResponseOK
+//	  400:
+//	 500:
 func (h *EndpointHandler) GetUserByID(ctx *gin.Context) {
 	param := ctx.Param("user_id")
 
@@ -40,9 +82,35 @@ func (h *EndpointHandler) GetUserByID(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, responseOK{
+		Data: user,
+	})
 }
 
+// swagger:route PUT /v1/admin/users/{id} UpdateUser
+//
+//			Parameters:
+//			 + name: id
+//			   in: path
+//	      	+ name: UpdateUser
+//				in: body
+//				type: UpdateUserRequest
+//
+//			Consumes:
+//			- application/json
+//
+//			Produces:
+//			- application/json
+//
+//			Schemes: http, https
+//
+//			Security:
+//			  Bearer:
+//
+//			Responses:
+//			  200: ResponseOK
+//		  400:
+//		 500:
 func (h *EndpointHandler) UpdateUser(ctx *gin.Context) {
 	param := ctx.Param("user_id")
 
@@ -89,6 +157,27 @@ func (h *EndpointHandler) UpdateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
+// swagger:route DELETE /v1/admin/users/{id} DeleteUser
+//
+//		Parameters:
+//		 + name: id
+//		   in: path
+//
+//		Consumes:
+//		- application/json
+//
+//		Produces:
+//		- application/json
+//
+//		Schemes: http, https
+//
+//		Security:
+//		  Bearer:
+//
+//		Responses:
+//		  200: ResponseMessage
+//	  400:
+//	 500:
 func (h *EndpointHandler) DeleteUser(ctx *gin.Context) {
 	param := ctx.Param("user_id")
 

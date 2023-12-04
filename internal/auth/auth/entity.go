@@ -6,8 +6,8 @@ type GenerateTokenRequest struct {
 }
 
 type JWTUserToken struct {
-	Token        string
-	RefreshToken string
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type JWTTokenContent struct {

@@ -65,7 +65,7 @@ func (app *Applicator) Run() {
 	repo := repository.NewRepository(mainDB, replicaDB)
 	_ = repo
 
-	userMemory := memory.NewUserMemory(l, repo, time.Minute)
+	userMemory := memory.NewUserMemory(l, repo, time.Second*15)
 
 	userMemory.Run(ctx)
 
@@ -75,7 +75,7 @@ func (app *Applicator) Run() {
 	if err != nil {
 		l.Panicf("failed to start grpc server err: %v", err)
 	}
-	l.Infof("grpc server started on port %s", cfg.Port)
+	l.Infof("[%s] gRPC server is run", cfg.Port)
 
 	defer grpcServer.Close()
 

@@ -1,0 +1,482 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "Auth-service API.",
+    "version": "0.0.1"
+  },
+  "basePath": "/api/auth",
+  "paths": {
+    "/v1/admin/users/": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "GetUsers",
+        "responses": {
+          "200": {
+            "description": "ResponseOK",
+            "schema": {
+              "$ref": "#/definitions/ResponseOK"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/admin/users/{id}": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "GetUserByID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseOK",
+            "schema": {
+              "$ref": "#/definitions/ResponseOK"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "UpdateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "name": "UpdateUser",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/UpdateUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseOK",
+            "schema": {
+              "$ref": "#/definitions/ResponseOK"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseMessage",
+            "schema": {
+              "$ref": "#/definitions/ResponseMessage"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/user/login": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "Login",
+        "parameters": [
+          {
+            "name": "GenerateToken",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/GenerateToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "UserToken",
+            "schema": {
+              "$ref": "#/definitions/UserToken"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/user/register": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "Register",
+        "parameters": [
+          {
+            "name": "RegisterUser",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/RegisterUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "ResponseCreated",
+            "schema": {
+              "$ref": "#/definitions/ResponseCreated"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/user/renew-token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "RenewToken",
+        "parameters": [
+          {
+            "name": "RefreshToken",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/RefreshToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "UserToken",
+            "schema": {
+              "$ref": "#/definitions/UserToken"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/user/{email}/confirm-user": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "ConfirmUser",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path"
+          },
+          {
+            "name": "ConfirmUserRequest",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/ConfirmUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseMessage",
+            "schema": {
+              "$ref": "#/definitions/ResponseMessage"
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ConfirmUserRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-go-name": "Code"
+        }
+      },
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+    },
+    "GenerateToken": {
+      "type": "object",
+      "properties": {
+        "Login": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string"
+        }
+      },
+      "x-go-name": "GenerateTokenRequest",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+    },
+    "RefreshToken": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string",
+          "x-go-name": "RefreshToken"
+        }
+      },
+      "x-go-name": "RefreshTokenRequest",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+    },
+    "RegisterUser": {
+      "type": "object",
+      "properties": {
+        "Email": {
+          "type": "string"
+        },
+        "FirstName": {
+          "type": "string"
+        },
+        "LastName": {
+          "type": "string"
+        },
+        "Login": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string"
+        },
+        "Phone": {
+          "type": "string"
+        }
+      },
+      "x-go-name": "CreateUserRequest",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+    },
+    "ResponseCreated": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        }
+      },
+      "x-go-name": "responseCreated",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+    },
+    "ResponseMessage": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        }
+      },
+      "x-go-name": "response",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+    },
+    "ResponseOK": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "x-go-name": "Data",
+          "example": "any"
+        }
+      },
+      "x-go-name": "responseOK",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+    },
+    "UpdateUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "first_name": {
+          "type": "string",
+          "x-go-name": "FirstName"
+        },
+        "last_name": {
+          "type": "string",
+          "x-go-name": "LastName"
+        },
+        "login": {
+          "type": "string",
+          "x-go-name": "Login"
+        },
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
+        },
+        "phone": {
+          "type": "string",
+          "x-go-name": "Phone"
+        }
+      },
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+    },
+    "UserToken": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string",
+          "x-go-name": "RefreshToken"
+        },
+        "token": {
+          "type": "string",
+          "x-go-name": "Token"
+        }
+      },
+      "x-go-name": "JWTUserToken",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

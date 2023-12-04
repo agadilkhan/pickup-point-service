@@ -22,6 +22,9 @@ func NewRouter(logger *zap.SugaredLogger) *router {
 func (r *router) GetHandler(h *EndpointHandler) http.Handler {
 	rt := gin.Default()
 
+	// swagger
+	rt.GET("/swagger/*any", gin.WrapH(h.Swagger()))
+
 	api := rt.Group("/api/auth/v1")
 	{
 		user := api.Group("/user")
@@ -34,7 +37,7 @@ func (r *router) GetHandler(h *EndpointHandler) http.Handler {
 
 		admin := api.Group("/admin")
 		{
-			admin.Use(middleware.AuthMiddleware(h.cfg, h.logger))
+			admin.Use(middleware.AdminMiddleware(h.cfg, h.logger))
 			admin.GET("/users", h.GetUsers)
 			admin.GET("/users/:user_id", h.GetUserByID)
 			admin.PUT("/users/:user_id", h.UpdateUser)
