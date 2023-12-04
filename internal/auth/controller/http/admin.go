@@ -154,7 +154,9 @@ func (h *EndpointHandler) UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, responseOK{
+		Data: user,
+	})
 }
 
 // swagger:route DELETE /v1/admin/users/{id} DeleteUser
@@ -197,5 +199,7 @@ func (h *EndpointHandler) DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, fmt.Sprintf("user with id %d: deleted", respID))
+	ctx.JSON(http.StatusOK, responseMessage{
+		Message: fmt.Sprintf("user with id %d: deleted", respID),
+	})
 }

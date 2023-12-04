@@ -5,3 +5,7 @@ tools/
 config/auth/config.yaml
 config/pickup/config.yaml
 config/user/config.yaml
+
+data
+
+.env

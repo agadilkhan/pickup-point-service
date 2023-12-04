@@ -38,7 +38,7 @@ func (app *Applicator) Run() {
 
 	mainDB, err := postgres.New(cfg.Database.Main)
 	if err != nil {
-		l.Panicf("cannot connect to mainDB '%s:%d':'%v'", cfg.Database.Main.Host, cfg.Database.Main.Port, err)
+		l.Panicf("cannot connect to mainDB '%s:%s':'%v'", cfg.Database.Main.Host, cfg.Database.Main.Port, err)
 	}
 
 	defer func() {
@@ -50,7 +50,7 @@ func (app *Applicator) Run() {
 
 	replicaDB, err := postgres.New(cfg.Database.Replica)
 	if err != nil {
-		l.Panicf("cannot connect to replicaDB '%s:%d':'%v'", cfg.Database.Replica.Host, cfg.Database.Replica.Port, err)
+		l.Panicf("cannot connect to replicaDB '%s:%s':'%v'", cfg.Database.Replica.Host, cfg.Database.Replica.Port, err)
 	}
 
 	defer func() {
