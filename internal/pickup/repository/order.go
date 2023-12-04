@@ -67,14 +67,16 @@ func (r *Repo) GetOrders(ctx context.Context, sortOptions pagination.SortOptions
 	var result = make([]entity.Order, 0)
 	var orders []entity.Order
 
-	for _, field := range filterOptions.Fields {
-		res := r.replica.DB.WithContext(ctx).Where(field.GetQuery())
-		if res.Error != nil {
-			return nil, res.Error
+	query := ""
+	for i := 0; i < len(filterOptions.Fields); i++ {
+		field := filterOptions.Fields[i]
+		query += field.GetQuery()
+		if i < len(filterOptions.Fields)-1 {
+			query += " AND "
 		}
 	}
 
-	res := r.replica.DB.WithContext(ctx).Order(sortOptions.GetOrderBy()).Find(&orders)
+	res := r.replica.DB.WithContext(ctx).Where(query).Order(sortOptions.GetOrderBy()).Find(&orders)
 	if res.Error != nil {
 		return nil, res.Error
 	}

@@ -33,13 +33,13 @@ import (
 //			 400:
 //	      404:
 //			 500:
-func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
+func (h *EndpointHandler) GetTransactions(ctx *gin.Context) {
 	param := ctx.Param("user_id")
 	query := ctx.Query("transaction_type")
 
 	userID, err := strconv.Atoi(param)
 	if err != nil {
-		eh.logger.Errorf("failed to convert user_id to int")
+		h.logger.Errorf("failed to convert user_id to int")
 		ctx.Status(http.StatusBadRequest)
 
 		return
@@ -47,7 +47,7 @@ func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
 
 	err = middleware.CheckUser(ctx, userID)
 	if err != nil {
-		eh.logger.Errorf("the user does not have access to resource")
+		h.logger.Errorf("the user does not have access to resource")
 		ctx.Status(http.StatusNotFound)
 
 		return
@@ -57,9 +57,9 @@ func (eh *EndpointHandler) GetTransactions(ctx *gin.Context) {
 		TransactionType: query,
 	}
 
-	transactions, err := eh.service.GetTransactions(ctx, userID, transactionQuery)
+	transactions, err := h.service.GetTransactions(ctx, userID, transactionQuery)
 	if err != nil {
-		eh.logger.Errorf("failed to GetTransaction err: %v", err)
+		h.logger.Errorf("failed to GetTransaction err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
 
 		return

@@ -93,6 +93,32 @@ func (h *EndpointHandler) DeleteOrder(ctx *gin.Context) {
 	})
 }
 
+// swagger:route GET /v1/orders/ GetOrders
+//
+//			Consumes:
+//			- application/json
+//
+//			Produces:
+//			- application/json
+//
+//			Schemes: http, https
+//
+//			Parameters:
+//				+ name: sort_by
+//				in: query
+//	         + name: sort_order
+//				in: query
+//	         + name: total_amount
+//				in: query
+//				+ name: created_at
+//				in: query
+//
+//				Security:
+//				  Bearer:
+//
+//			Responses:
+//		 200: ResponseOK
+//		 500:
 func (h *EndpointHandler) GetOrders(ctx *gin.Context) {
 	sortBy := ctx.Query("sort_by")
 	sortOrder := ctx.Query("sort_order")
@@ -109,18 +135,40 @@ func (h *EndpointHandler) GetOrders(ctx *gin.Context) {
 	if totalAmount != "" {
 		value := totalAmount
 		totalAmountBuilder.SetName("total_amount")
+		totalAmountBuilder.SetType("num")
 		if strings.Index(value, ":") != -1 {
 			split := strings.Split(totalAmount, ":")
-			if _, err := strconv.ParseFloat(split[0], 64); err == nil {
-				totalAmountBuilder.SetValues(split[0], split[1])
-				totalAmountBuilder.SetOperator("between")
+			if val1, err := strconv.ParseFloat(split[0], 64); err == nil {
+				val2, err := strconv.ParseFloat(split[1], 64)
+				if err != nil {
+					h.logger.Errorf("bad value")
+					ctx.Status(http.StatusBadRequest)
+
+					return
+				}
+				totalAmountBuilder.SetValues(val1, val2)
+				totalAmountBuilder.SetOperator(":")
 			} else {
+				val, err := strconv.ParseFloat(split[1], 64)
+				if err != nil {
+					h.logger.Errorf("bad value")
+					ctx.Status(http.StatusBadRequest)
+
+					return
+				}
 				totalAmountBuilder.SetOperator(split[0])
-				totalAmountBuilder.SetValues(split[1])
+				totalAmountBuilder.SetValues(val)
 			}
 		} else {
+			val, err := strconv.ParseFloat(value, 64)
+			if err != nil {
+				h.logger.Errorf("bad value")
+				ctx.Status(http.StatusBadRequest)
+
+				return
+			}
+			totalAmountBuilder.SetValues(val)
 			totalAmountBuilder.SetOperator("eq")
-			totalAmountBuilder.SetValues(value)
 		}
 		totalAmountField := totalAmountBuilder.Build()
 		filterOptions.AddField(*totalAmountField)
@@ -131,6 +179,7 @@ func (h *EndpointHandler) GetOrders(ctx *gin.Context) {
 	if createdAt != "" {
 		value := createdAt
 		createdAtBuilder.SetName("created_at")
+		createdAtBuilder.SetType("date")
 		if strings.Index(value, ":") != -1 {
 			split := strings.Split(createdAt, ":")
 			startDate, err := time.Parse("2006-01-02", split[0])
@@ -147,8 +196,8 @@ func (h *EndpointHandler) GetOrders(ctx *gin.Context) {
 
 				return
 			}
-			createdAtBuilder.SetValues(startDate, endDate)
-			createdAtBuilder.SetOperator("between")
+			createdAtBuilder.SetValues(startDate.Format("2006-01-02"), endDate.Format("2006-01-02"))
+			createdAtBuilder.SetOperator(":")
 		} else {
 			date, err := time.Parse("2006-01-02", value)
 			if err != nil {
@@ -157,7 +206,7 @@ func (h *EndpointHandler) GetOrders(ctx *gin.Context) {
 
 				return
 			}
-			createdAtBuilder.SetValues(date)
+			createdAtBuilder.SetValues(date.Format("2006-01-02"))
 			createdAtBuilder.SetOperator("eq")
 		}
 		createdAtField := createdAtBuilder.Build()
@@ -172,7 +221,9 @@ func (h *EndpointHandler) GetOrders(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, orders)
+	ctx.JSON(http.StatusOK, responseOK{
+		Data: orders,
+	})
 }
 
 // swagger:route GET /v1/orders/{order_code} GetOrderByCode

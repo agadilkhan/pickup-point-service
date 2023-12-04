@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/agadilkhan/pickup-point-service/pkg/pagination"
 
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/database/postgres"
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
@@ -15,7 +16,7 @@ type Repository interface {
 }
 
 type OrderRepository interface {
-	GetOrders(ctx context.Context, sort, direction string) (*[]entity.Order, error)
+	GetOrders(ctx context.Context, sortOptions pagination.SortOptions, filterOptions pagination.FilterOptions) (*[]entity.Order, error)
 	GetOrderByCode(ctx context.Context, code string) (*entity.Order, error)
 	UpdateOrder(ctx context.Context, order *entity.Order) (*entity.Order, error)
 	CreateOrder(ctx context.Context, order *entity.Order) (int, error)
@@ -29,6 +30,7 @@ type TransactionRepository interface {
 
 type ProductRepository interface {
 	GetProduct(ctx context.Context, id int) (*entity.Product, error)
+	GetProducts(ctx context.Context, searchOptions pagination.SearchOptions) (*[]entity.Product, error)
 }
 
 type OrderItemRepository interface {

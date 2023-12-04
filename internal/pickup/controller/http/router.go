@@ -50,6 +50,7 @@ func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 		api.POST("/orders/:order_code/items/:product_id/refund", eh.RefundItem)
 
 		api.GET("/:user_id/transactions", eh.GetTransactions)
+		api.GET("/products/", eh.GetProducts)
 	}
 	return rt
 }

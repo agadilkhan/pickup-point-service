@@ -14,6 +14,53 @@
   "basePath": "/api/pickup",
   "paths": {
     "/v1/orders/": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "GetOrders",
+        "parameters": [
+          {
+            "name": "sort_by",
+            "in": "query"
+          },
+          {
+            "name": "sort_order",
+            "in": "query"
+          },
+          {
+            "name": "total_amount",
+            "in": "query"
+          },
+          {
+            "name": "created_at",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseOK",
+            "schema": {
+              "$ref": "#/definitions/ResponseOK"
+            }
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      },
       "post": {
         "security": [
           {
@@ -378,6 +425,43 @@
           },
           "400": {
             "description": ""
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/products": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "operationId": "GetProducts",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ResponseOK",
+            "schema": {
+              "$ref": "#/definitions/ResponseOK"
+            }
           },
           "500": {
             "description": ""

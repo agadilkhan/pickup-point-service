@@ -35,12 +35,12 @@ import (
 //		 200: ResponseMessage
 //		 400:
 //		 500:
-func (eh *EndpointHandler) RefundItem(ctx *gin.Context) {
+func (h *EndpointHandler) RefundItem(ctx *gin.Context) {
 	params := ctx.Params
 
 	orderCode, ok := params.Get("order_code")
 	if !ok {
-		eh.logger.Errorf("failed to parse order_code from params")
+		h.logger.Errorf("failed to parse order_code from params")
 		ctx.Status(http.StatusBadRequest)
 
 		return
@@ -48,7 +48,7 @@ func (eh *EndpointHandler) RefundItem(ctx *gin.Context) {
 
 	productID, ok := params.Get("product_id")
 	if !ok {
-		eh.logger.Errorf("failed to parse product_id from params")
+		h.logger.Errorf("failed to parse product_id from params")
 		ctx.Status(http.StatusBadRequest)
 
 		return
@@ -56,7 +56,7 @@ func (eh *EndpointHandler) RefundItem(ctx *gin.Context) {
 
 	pID, err := strconv.Atoi(productID)
 	if err != nil {
-		eh.logger.Errorf("failed to convert product_id to int")
+		h.logger.Errorf("failed to convert product_id to int")
 		ctx.Status(http.StatusBadRequest)
 
 		return
@@ -67,18 +67,18 @@ func (eh *EndpointHandler) RefundItem(ctx *gin.Context) {
 	}{}
 
 	if err = ctx.ShouldBindJSON(&request); err != nil {
-		eh.logger.Errorf("failed to Unmarshal err: %v", err)
+		h.logger.Errorf("failed to Unmarshal err: %v", err)
 		ctx.Status(http.StatusBadRequest)
 
 		return
 	}
 
-	err = eh.service.RefundItem(ctx, orderCode, pickup.RefundItemRequest{
+	err = h.service.RefundItem(ctx, orderCode, pickup.RefundItemRequest{
 		ProductID: pID,
 		Quantity:  request.Quantity,
 	})
 	if err != nil {
-		eh.logger.Errorf("failed to RefundItem err: %v", err)
+		h.logger.Errorf("failed to RefundItem err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
 
 		return
@@ -112,12 +112,12 @@ func (eh *EndpointHandler) RefundItem(ctx *gin.Context) {
 //	 200: ResponseMessage
 //	 400:
 //	 500:
-func (eh *EndpointHandler) ReceiveItem(ctx *gin.Context) {
+func (h *EndpointHandler) ReceiveItem(ctx *gin.Context) {
 	params := ctx.Params
 
 	orderCode, ok := params.Get("order_code")
 	if !ok {
-		eh.logger.Errorf("failed to parse order_code from params")
+		h.logger.Errorf("failed to parse order_code from params")
 		ctx.Status(http.StatusBadRequest)
 
 		return
@@ -125,7 +125,7 @@ func (eh *EndpointHandler) ReceiveItem(ctx *gin.Context) {
 
 	productID, ok := params.Get("product_id")
 	if !ok {
-		eh.logger.Errorf("failed to parse product_id from params")
+		h.logger.Errorf("failed to parse product_id from params")
 		ctx.Status(http.StatusBadRequest)
 
 		return
@@ -133,15 +133,15 @@ func (eh *EndpointHandler) ReceiveItem(ctx *gin.Context) {
 
 	pID, err := strconv.Atoi(productID)
 	if err != nil {
-		eh.logger.Errorf("failed to convert product_id to int")
+		h.logger.Errorf("failed to convert product_id to int")
 		ctx.Status(http.StatusBadRequest)
 
 		return
 	}
 
-	err = eh.service.ReceiveItem(ctx, orderCode, pID)
+	err = h.service.ReceiveItem(ctx, orderCode, pID)
 	if err != nil {
-		eh.logger.Errorf("failed to ReceiveItem err: %v", err)
+		h.logger.Errorf("failed to ReceiveItem err: %v", err)
 		ctx.Status(http.StatusInternalServerError)
 
 		return

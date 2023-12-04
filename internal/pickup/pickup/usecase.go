@@ -2,8 +2,8 @@ package pickup
 
 import (
 	"context"
-
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
+	"github.com/agadilkhan/pickup-point-service/pkg/pagination"
 )
 
 type UseCase interface {
@@ -17,7 +17,7 @@ type OrderUseCase interface {
 	GetOrderByCode(ctx context.Context, code string) (*entity.Order, error)
 	CreateOrder(ctx context.Context, request CreateOrderRequest) (int, error)
 	DeleteOrder(ctx context.Context, code string) (string, error)
-	GetOrders(ctx context.Context, request GetOrdersQuery) (*[]entity.Order, error)
+	GetOrders(ctx context.Context, sortOptions pagination.SortOptions, filterOptions pagination.FilterOptions) (*[]entity.Order, error)
 	PickupOrder(ctx context.Context, code string) error
 	ReceiveOrder(ctx context.Context, code string) error
 	CancelOrder(ctx context.Context, code string) error
@@ -31,6 +31,7 @@ type TransactionUseCase interface {
 
 type ProductUseCase interface {
 	GetProduct(ctx context.Context, id int) (*entity.Product, error)
+	GetProducts(ctx context.Context, searchOptions pagination.SearchOptions) (*[]entity.Product, error)
 }
 
 type OrderItemUseCase interface {

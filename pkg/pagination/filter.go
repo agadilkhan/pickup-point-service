@@ -1,6 +1,8 @@
 package pagination
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type FilterOptions struct {
 	Fields []Field
@@ -10,14 +12,23 @@ type Field struct {
 	Name     string
 	Values   []interface{}
 	Operator string
+	Type     string
 }
 
 func (f *Field) GetQuery() string {
-	if len(f.Values) == 2 {
-		return fmt.Sprintf("%s %v %s %v", f.Name, f.Values[0], f.Operator, f.Values[1])
+	if f.Operator == "between" {
+		switch f.Type {
+		case "num":
+			return fmt.Sprintf("%s %s %v AND %v", f.Name, f.Operator, f.Values[0], f.Values[1])
+		}
+		return fmt.Sprintf("%s %s '%v' AND '%v'", f.Name, f.Operator, f.Values[0], f.Values[1])
 	}
 
-	return fmt.Sprintf("%s %s %v", f.Name, f.Operator, f.Values[0])
+	switch f.Type {
+	case "num":
+		return fmt.Sprintf("%s %s %v", f.Name, f.Operator, f.Values[0])
+	}
+	return fmt.Sprintf("%s %s '%v'", f.Name, f.Operator, f.Values[0])
 }
 
 type FieldBuilder struct {
@@ -40,6 +51,10 @@ func (fb *FieldBuilder) SetOperator(operator string) {
 
 func (fb *FieldBuilder) SetValues(values ...interface{}) {
 	fb.field.Values = values
+}
+
+func (fb *FieldBuilder) SetType(Type string) {
+	fb.field.Type = Type
 }
 
 func (fb *FieldBuilder) Build() *Field {

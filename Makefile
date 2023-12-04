@@ -51,3 +51,11 @@ $(TOOLS_BIN)/goimports:
 	mkdir -p $(TOOLS_BIN)
 	go install golang.org/x/tools/cmd/goimports@latest
 
+
+# sorting: sort_order=val&sort_by=asc/desc
+# searching: field=val
+# filtering:
+#			num_field=lt/gt/eq/lte/gte:val, val:val
+#         	date_field=val, val:val
+#			bool_field=val
+#           string_field=val
