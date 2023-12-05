@@ -1,8 +1,9 @@
 package http
 
 import (
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/middleware"
 	"github.com/gin-gonic/gin"

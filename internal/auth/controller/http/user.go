@@ -159,9 +159,7 @@ func (h *EndpointHandler) RenewToken(ctx *gin.Context) {
 		zap.String("params", ctx.FullPath()),
 	)
 
-	request := struct {
-		RefreshToken string `json:"refresh_token"`
-	}{}
+	request := auth.RefreshTokenRequest{}
 
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Errorf("failed to Unmarshal err: %v", err)
@@ -204,9 +202,9 @@ func (h *EndpointHandler) RenewToken(ctx *gin.Context) {
 //		Parameters:
 //		 + name: email
 //		   in: path
-//		+ name: ConfirmUserRequest
+//		+ name: UserCode
 //			in: body
-//			type: ConfirmUserRequest
+//			type: UserCode
 //
 //
 //		Responses:
@@ -221,9 +219,7 @@ func (h *EndpointHandler) ConfirmUser(ctx *gin.Context) {
 
 	email := ctx.Param("email")
 
-	request := struct {
-		Code string `json:"code"`
-	}{}
+	request := auth.UserCodeRequest{}
 
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		logger.Errorf("failed to Unmarshal err: %v", err)

@@ -2,11 +2,12 @@ package http
 
 import (
 	"fmt"
-	"github.com/agadilkhan/pickup-point-service/pkg/pagination"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/agadilkhan/pickup-point-service/pkg/pagination"
 
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
 	"github.com/gin-gonic/gin"
@@ -136,6 +137,7 @@ func (h *EndpointHandler) GetOrders(ctx *gin.Context) {
 		value := totalAmount
 		totalAmountBuilder.SetName("total_amount")
 		totalAmountBuilder.SetType("num")
+		//nolint:all
 		if strings.Index(value, ":") != -1 {
 			split := strings.Split(totalAmount, ":")
 			if val1, err := strconv.ParseFloat(split[0], 64); err == nil {
@@ -180,6 +182,7 @@ func (h *EndpointHandler) GetOrders(ctx *gin.Context) {
 		value := createdAt
 		createdAtBuilder.SetName("created_at")
 		createdAtBuilder.SetType("date")
+		//nolint:all
 		if strings.Index(value, ":") != -1 {
 			split := strings.Split(createdAt, ":")
 			startDate, err := time.Parse("2006-01-02", split[0])

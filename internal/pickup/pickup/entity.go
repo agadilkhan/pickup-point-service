@@ -4,11 +4,7 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/pickup/entity"
 )
 
-type GetOrdersQuery struct {
-	Sort      string
-	Direction string
-}
-
+// swagger:model CreateOrderRequest
 type CreateOrderRequest struct {
 	CustomerID int                `json:"customer_id"`
 	CompanyID  int                `json:"company_id"`
@@ -21,6 +17,7 @@ type CreateOrderRequest struct {
 	} `json:"items"`
 }
 
+//swagger:model RefundItemRequest
 type RefundItemRequest struct {
 	ProductID int
 	Quantity  int

@@ -56,17 +56,17 @@ func (s *Service) GetUserByID(ctx context.Context, id int) (*entity.User, error)
 	return &user, nil
 }
 
-func (s *Service) UpdateUser(ctx context.Context, request UpdateUserRequest) (*entity.User, error) {
-	request.Password = s.generatePassword(request.Password)
+func (s *Service) UpdateUser(ctx context.Context, user *entity.User) (*entity.User, error) {
+	user.Password = s.generatePassword(user.Password)
 
 	updateRequest := transport.UpdateUserRequest{
-		ID:        request.ID,
-		FirstName: request.FirstName,
-		LastName:  request.LastName,
-		Email:     request.Email,
-		Phone:     request.Phone,
-		Login:     request.Login,
-		Password:  request.Password,
+		ID:        user.ID,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		Login:     user.Login,
+		Password:  user.Password,
 	}
 
 	resp, err := s.userGrpcTransport.UpdateUser(ctx, updateRequest)

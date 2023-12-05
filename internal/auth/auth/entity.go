@@ -1,10 +1,12 @@
 package auth
 
+//swagger:model GenerateToken
 type GenerateTokenRequest struct {
 	Login    string
 	Password string
 }
 
+//swagger:model UserToken
 type JWTUserToken struct {
 	Token        string `json:"token"`
 	RefreshToken string `json:"refresh_token"`
@@ -17,6 +19,7 @@ type JWTTokenContent struct {
 	LastName  string
 }
 
+//swagger:model RegisterUser
 type CreateUserRequest struct {
 	FirstName string
 	LastName  string
@@ -31,13 +34,22 @@ type ConfirmUserRequest struct {
 	Code  string
 }
 
+//swagger:model UpdateUser
 type UpdateUserRequest struct {
-	ID        int
-	RoleID    int
-	FirstName string
-	LastName  string
-	Email     string
-	Phone     string
-	Login     string
-	Password  string
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	Login     string `json:"login"`
+	Password  string `json:"password"`
+}
+
+// swagger:model UserCode
+type UserCodeRequest struct {
+	Code string `json:"code"`
+}
+
+//swagger:model RefreshToken
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token"`
 }

@@ -2,8 +2,9 @@ package http
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // swagger:route POST /v1/orders/{order_code}/pickup PickupOrder

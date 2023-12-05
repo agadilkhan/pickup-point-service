@@ -2,11 +2,12 @@ package applicator
 
 import (
 	"context"
-	"github.com/agadilkhan/pickup-point-service/internal/user/memory"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/agadilkhan/pickup-point-service/internal/user/memory"
 
 	"github.com/agadilkhan/pickup-point-service/internal/user/config"
 	"github.com/agadilkhan/pickup-point-service/internal/user/controller/grpc"

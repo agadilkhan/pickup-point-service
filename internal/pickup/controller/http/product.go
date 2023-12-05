@@ -1,9 +1,10 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/agadilkhan/pickup-point-service/pkg/pagination"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // swagger:route GET /v1/products GetProducts

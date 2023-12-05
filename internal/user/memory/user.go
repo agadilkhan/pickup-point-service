@@ -2,11 +2,12 @@ package memory
 
 import (
 	"context"
+	"sync"
+	"time"
+
 	"github.com/agadilkhan/pickup-point-service/internal/user/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/user/repository"
 	"go.uber.org/zap"
-	"sync"
-	"time"
 )
 
 type UserMemory struct {

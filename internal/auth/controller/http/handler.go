@@ -1,13 +1,14 @@
 package http
 
 import (
+	"io/fs"
+	"mime"
+	"net/http"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	"github.com/agadilkhan/pickup-point-service/swagger"
 	"go.uber.org/zap"
-	"io/fs"
-	"mime"
-	"net/http"
 )
 
 type EndpointHandler struct {

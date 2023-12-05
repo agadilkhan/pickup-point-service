@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -94,7 +95,7 @@ func (h *EndpointHandler) GetUserByID(ctx *gin.Context) {
 //			   in: path
 //	      	+ name: UpdateUser
 //				in: body
-//				type: UpdateUserRequest
+//				type: UpdateUser
 //
 //			Consumes:
 //			- application/json
@@ -138,7 +139,7 @@ func (h *EndpointHandler) UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := h.authService.UpdateUser(ctx, auth.UpdateUserRequest{
+	user, err := h.authService.UpdateUser(ctx, &entity.User{
 		ID:        userID,
 		FirstName: request.FirstName,
 		LastName:  request.LastName,
