@@ -563,7 +563,7 @@
           "$ref": "#/definitions/OrderStatus"
         }
       },
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
     },
     "OrderStatus": {
       "type": "string",
@@ -572,13 +572,18 @@
     "RefundItemRequest": {
       "type": "object",
       "properties": {
+        "product_id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ProductID"
+        },
         "quantity": {
           "type": "integer",
           "format": "int64",
           "x-go-name": "Quantity"
         }
       },
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/pickup"
     },
     "ResponseCreated": {
       "type": "object",
@@ -590,7 +595,7 @@
         }
       },
       "x-go-name": "responseCreated",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http"
     },
     "ResponseMessage": {
       "type": "object",
@@ -601,7 +606,7 @@
         }
       },
       "x-go-name": "responseMessage",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http"
     },
     "ResponseOK": {
       "type": "object",
@@ -612,7 +617,7 @@
         }
       },
       "x-go-name": "responseOK",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http/swagger_model"
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/pickup/controller/http"
     }
   },
   "securityDefinitions": {

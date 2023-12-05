@@ -113,7 +113,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "$ref": "#/definitions/UpdateUserRequest"
+              "$ref": "#/definitions/UpdateUser"
             }
           }
         ],
@@ -307,11 +307,11 @@
             "in": "path"
           },
           {
-            "name": "ConfirmUserRequest",
+            "name": "UserCode",
             "in": "body",
             "schema": {
               "type": "object",
-              "$ref": "#/definitions/ConfirmUserRequest"
+              "$ref": "#/definitions/UserCode"
             }
           }
         ],
@@ -333,28 +333,20 @@
     }
   },
   "definitions": {
-    "ConfirmUserRequest": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "string",
-          "x-go-name": "Code"
-        }
-      },
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
-    },
     "GenerateToken": {
       "type": "object",
       "properties": {
-        "Login": {
-          "type": "string"
+        "login": {
+          "type": "string",
+          "x-go-name": "Login"
         },
-        "Password": {
-          "type": "string"
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
         }
       },
       "x-go-name": "GenerateTokenRequest",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/auth"
     },
     "RefreshToken": {
       "type": "object",
@@ -365,68 +357,9 @@
         }
       },
       "x-go-name": "RefreshTokenRequest",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/auth"
     },
     "RegisterUser": {
-      "type": "object",
-      "properties": {
-        "Email": {
-          "type": "string"
-        },
-        "FirstName": {
-          "type": "string"
-        },
-        "LastName": {
-          "type": "string"
-        },
-        "Login": {
-          "type": "string"
-        },
-        "Password": {
-          "type": "string"
-        },
-        "Phone": {
-          "type": "string"
-        }
-      },
-      "x-go-name": "CreateUserRequest",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
-    },
-    "ResponseCreated": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "ID"
-        }
-      },
-      "x-go-name": "responseCreated",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
-    },
-    "ResponseMessage": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string",
-          "x-go-name": "Message"
-        }
-      },
-      "x-go-name": "response",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
-    },
-    "ResponseOK": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "x-go-name": "Data",
-          "example": "any"
-        }
-      },
-      "x-go-name": "responseOK",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
-    },
-    "UpdateUserRequest": {
       "type": "object",
       "properties": {
         "email": {
@@ -454,7 +387,84 @@
           "x-go-name": "Phone"
         }
       },
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+      "x-go-name": "CreateUserRequest",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/auth"
+    },
+    "ResponseCreated": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        }
+      },
+      "x-go-name": "responseCreated",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http"
+    },
+    "ResponseMessage": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        }
+      },
+      "x-go-name": "responseMessage",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http"
+    },
+    "ResponseOK": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "x-go-name": "Data",
+          "example": "any"
+        }
+      },
+      "x-go-name": "responseOK",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http"
+    },
+    "UpdateUser": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "first_name": {
+          "type": "string",
+          "x-go-name": "FirstName"
+        },
+        "last_name": {
+          "type": "string",
+          "x-go-name": "LastName"
+        },
+        "login": {
+          "type": "string",
+          "x-go-name": "Login"
+        },
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
+        },
+        "phone": {
+          "type": "string",
+          "x-go-name": "Phone"
+        }
+      },
+      "x-go-name": "UpdateUserRequest",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/auth"
+    },
+    "UserCode": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-go-name": "Code"
+        }
+      },
+      "x-go-name": "UserCodeRequest",
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/auth"
     },
     "UserToken": {
       "type": "object",
@@ -469,7 +479,7 @@
         }
       },
       "x-go-name": "JWTUserToken",
-      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/controller/http/swagger_models"
+      "x-go-package": "github.com/agadilkhan/pickup-point-service/internal/auth/auth"
     }
   },
   "securityDefinitions": {

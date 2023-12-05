@@ -2,8 +2,8 @@ package auth
 
 //swagger:model GenerateToken
 type GenerateTokenRequest struct {
-	Login    string
-	Password string
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }
 
 //swagger:model UserToken
@@ -21,12 +21,12 @@ type JWTTokenContent struct {
 
 //swagger:model RegisterUser
 type CreateUserRequest struct {
-	FirstName string
-	LastName  string
-	Email     string
-	Phone     string
-	Login     string
-	Password  string
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	Login     string `json:"login"`
+	Password  string `json:"password"`
 }
 
 type ConfirmUserRequest struct {

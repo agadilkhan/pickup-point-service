@@ -1,3 +1,6 @@
+include .env
+export
+
 # Tools.
 TOOLS = ./tools
 TOOLS_BIN = $(TOOLS)/bin
@@ -51,6 +54,27 @@ $(TOOLS_BIN)/goimports:
 	mkdir -p $(TOOLS_BIN)
 	go install golang.org/x/tools/cmd/goimports@latest
 
+
+auth-migrate:
+	migrate create -ext sql -dir migration/auth -seq create
+	migrate create -ext sql -dir migration/auth -seq insert
+
+auth-migrateup:
+	migrate -path migration/auth -database "${AUTH_DATABASE_URL}" -verbose up
+
+pickup-migrate:
+	migrate create -ext sql -dir migration/pickup -seq create
+	migrate create -ext sql -dir migration/pickup -seq insert
+
+pickup-migrateup:
+	migrate -path migration/pickup -database "${PICKUP_DATABASE_URL}" -verbose up
+
+user-migrate:
+	migrate create -ext sql -dir migration/user -seq create
+	migrate create -ext sql -dir migration/user -seq insert
+
+user-migrateup:
+	migrate -path migration/user -database ${USER_DATABASE_URL} -verbose up
 
 # sorting: sort_order=val&sort_by=asc/desc
 # searching: field=val

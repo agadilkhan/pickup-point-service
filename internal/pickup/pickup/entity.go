@@ -19,8 +19,8 @@ type CreateOrderRequest struct {
 
 //swagger:model RefundItemRequest
 type RefundItemRequest struct {
-	ProductID int
-	Quantity  int
+	ProductID int `json:"product_id"`
+	Quantity  int `json:"quantity"`
 }
 
 type GetTransactionsQuery struct {
