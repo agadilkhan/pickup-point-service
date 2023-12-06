@@ -3,6 +3,7 @@ package producer
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 )

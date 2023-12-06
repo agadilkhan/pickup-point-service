@@ -2,6 +2,11 @@ package applicator
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/cache"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
@@ -13,10 +18,6 @@ import (
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
 	"github.com/agadilkhan/pickup-point-service/internal/kafka"
 	"go.uber.org/zap"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 type Applicator struct {

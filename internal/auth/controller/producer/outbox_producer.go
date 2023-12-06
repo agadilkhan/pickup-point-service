@@ -2,10 +2,11 @@ package producer
 
 import (
 	"context"
+	"time"
+
 	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"github.com/agadilkhan/pickup-point-service/internal/kafka"
 	"go.uber.org/zap"
-	"time"
 )
 
 type OutboxProducer struct {

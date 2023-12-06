@@ -6,8 +6,9 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 	"math/rand"
+
+	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"

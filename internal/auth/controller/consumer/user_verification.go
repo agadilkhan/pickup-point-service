@@ -3,8 +3,9 @@ package consumer
 import (
 	"context"
 	"encoding/json"
-	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"time"
+
+	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 
 	"github.com/IBM/sarama"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
