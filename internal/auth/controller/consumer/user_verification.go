@@ -3,7 +3,6 @@ package consumer
 import (
 	"context"
 	"encoding/json"
-	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"time"
 
@@ -19,10 +18,11 @@ type UserVerificationCallback struct {
 	repo     repository.Repository
 }
 
-func NewUserVerificationCallback(logger *zap.SugaredLogger, redisCli *redis.Client) *UserVerificationCallback {
+func NewUserVerificationCallback(logger *zap.SugaredLogger, redisCli *redis.Client, repo repository.Repository) *UserVerificationCallback {
 	return &UserVerificationCallback{
 		logger:   logger,
 		redisCli: redisCli,
+		repo:     repo,
 	}
 }
 
@@ -42,11 +42,9 @@ func (c *UserVerificationCallback) Callback(message <-chan *sarama.ConsumerMessa
 				if err != nil {
 					c.logger.Errorf("failed to save record value in memory err: %v", err)
 				} else {
-					err = c.repo.UpdateMessage(context.Background(), entity.OutboxMessage{
-						Code: userCode.Code,
-					})
+					err = c.repo.UpdateMessage(context.TODO(), userCode.Code)
 					if err != nil {
-						c.logger.Errorf("failed to update kafka message err: %v", err)
+						c.logger.Errorf("failed to UpdateMessage err: %v", err)
 					}
 				}
 			}

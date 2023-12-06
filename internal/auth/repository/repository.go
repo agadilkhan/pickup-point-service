@@ -20,8 +20,9 @@ type UserTokenRepository interface {
 type OutboxMessageRepository interface {
 	SaveOutboxMessage(ctx context.Context, message entity.OutboxMessage) (int, error)
 	GetUnProcessedMessages(ctx context.Context) (*[]entity.OutboxMessage, error)
-	ProcessMessage(ctx context.Context, message entity.OutboxMessage) error
-	UpdateMessage(ctx context.Context, message entity.OutboxMessage) error
+	UpdateMessage(ctx context.Context, code string) error
+	DeleteMessage(ctx context.Context, message entity.OutboxMessage) error
+	GetProcessedMessages(ctx context.Context) (*[]entity.OutboxMessage, error)
 }
 
 type Repo struct {

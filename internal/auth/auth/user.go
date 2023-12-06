@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/entity"
 	"math/rand"
 
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer/dto"
@@ -42,6 +43,16 @@ func (s *Service) Register(ctx context.Context, request CreateUserRequest) (int,
 	b, err := json.Marshal(&msg)
 	if err != nil {
 		return 0, fmt.Errorf("failed to marshal UserCode err: %v", err)
+	}
+
+	outboxMessage := entity.OutboxMessage{
+		UserEmail: msg.Email,
+		Code:      msg.Code,
+	}
+
+	_, err = s.repo.SaveOutboxMessage(ctx, outboxMessage)
+	if err != nil {
+		return 0, fmt.Errorf("failed to SaveOutboxMessage err: %v", err)
 	}
 
 	s.userVerificationProducer.ProduceMessage(b)

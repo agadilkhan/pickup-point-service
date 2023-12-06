@@ -2,20 +2,21 @@ package applicator
 
 import (
 	"context"
-	"os"
-	"os/signal"
-	"syscall"
-
 	"github.com/agadilkhan/pickup-point-service/internal/auth/auth"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/cache"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/config"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/consumer"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/http"
+	"github.com/agadilkhan/pickup-point-service/internal/auth/controller/producer"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/database/postgres"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/repository"
 	"github.com/agadilkhan/pickup-point-service/internal/auth/transport"
 	"github.com/agadilkhan/pickup-point-service/internal/kafka"
 	"go.uber.org/zap"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 type Applicator struct {
@@ -65,6 +66,8 @@ func (app *Applicator) Run() {
 
 	l.Info("db connection success")
 
+	repo := repository.NewRepository(mainDB, replicaDB)
+
 	redisCli, err := cache.NewRedisClient(cfg.Redis)
 	if err != nil {
 		l.Panicf("cannot connect to redis: %v", err)
@@ -75,7 +78,7 @@ func (app *Applicator) Run() {
 		l.Panicf("failed NewProducer err: %v", err)
 	}
 
-	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l, redisCli)
+	userVerificationConsumerCallback := consumer.NewUserVerificationCallback(l, redisCli, repo)
 
 	userVerificationConsumer, err := kafka.NewConsumer(l, cfg.Kafka, userVerificationConsumerCallback)
 	if err != nil {
@@ -84,7 +87,9 @@ func (app *Applicator) Run() {
 
 	go userVerificationConsumer.Start()
 
-	repo := repository.NewRepository(mainDB, replicaDB)
+	outboxProducer := producer.NewOutboxProducer(userVerificationProducer, repo, time.Duration(time.Minute), l, 5)
+
+	go outboxProducer.Run(ctx)
 
 	userGrpcTransport := transport.NewUserGrpcTransport(cfg.UserGrpc)
 
