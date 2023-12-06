@@ -12,6 +12,7 @@ type UseCase interface {
 	TransactionUseCase
 	ProductUseCase
 	OrderItemUseCase
+	QRMe
 }
 
 type OrderUseCase interface {
@@ -38,4 +39,8 @@ type ProductUseCase interface {
 type OrderItemUseCase interface {
 	ReceiveItem(ctx context.Context, orderCode string, productID int) error
 	RefundItem(ctx context.Context, orderCode string, request RefundItemRequest) error
+}
+
+type QRMe interface {
+	Me(ctx context.Context, userID int) ([]byte, error)
 }

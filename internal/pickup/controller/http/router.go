@@ -52,6 +52,7 @@ func (r *router) GetHandler(eh *EndpointHandler) http.Handler {
 
 		api.GET("/:user_id/transactions", eh.GetTransactions)
 		api.GET("/products/", eh.GetProducts)
+		api.GET("/me", eh.me)
 	}
 	return rt
 }
