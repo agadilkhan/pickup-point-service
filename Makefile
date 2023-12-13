@@ -57,17 +57,16 @@ $(TOOLS_BIN)/goimports:
 
 auth-migrate:
 	migrate create -ext sql -dir migration/auth -seq create
-	migrate create -ext sql -dir migration/auth -seq insert
 
 auth-migrateup:
-	migrate -path migration/auth -database "${AUTH_DATABASE_URL}" -verbose up
+	migrate create -ext sql -dir migration/auth -seq create
 
 pickup-migrate:
 	migrate create -ext sql -dir migration/pickup -seq create
 	migrate create -ext sql -dir migration/pickup -seq insert
 
 pickup-migrateup:
-	migrate -path migration/pickup -database "${PICKUP_DATABASE_URL}" -verbose up
+	migrate -path migration/pickup -database ${PICKUP_DATABASE_URL} -verbose up
 
 user-migrate:
 	migrate create -ext sql -dir migration/user -seq create
@@ -75,6 +74,15 @@ user-migrate:
 
 user-migrateup:
 	migrate -path migration/user -database ${USER_DATABASE_URL} -verbose up
+
+start-auth:
+	go run ./cmd/auth/main.go
+
+start-user:
+	go run ./cmd/user/main.go
+
+start-pickup:
+	go run ./cmd/pickup/main.go
 
 # sorting: sort_order=val&sort_by=asc/desc
 # searching: field=val
