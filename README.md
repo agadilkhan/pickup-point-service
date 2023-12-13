@@ -13,7 +13,6 @@
    ```
 
 ### Migrate
-#### Create .env file and fill values given in .env.example file
 1. To migrate the data and tables on auth service
  ```
     make auth-migrateup
@@ -28,7 +27,6 @@
   ```
 
 ### Launch
-#### Create config.yaml file inside each folder that are located inside the config folder. And fill values given in config.yaml.example.
 1. To launch the auth-service:
  ```
     make start-auth
@@ -76,3 +74,9 @@
 [Grafana-url]: https://grafana.com/
 [Prometheus-badge]: https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white
 [Prometheus-url]: https://prometheus.io/
+
+## Contact
+
+[Alfarabi Agadilkhan](https://t.me/agadilkhan) (aagadilkhan@gmail.com)
+
+
