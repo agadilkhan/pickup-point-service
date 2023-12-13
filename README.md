@@ -1,6 +1,8 @@
 # Pick-up point service
 ### A service for admins and employees, where they can manage pick-up point orders.
 
+***
+
 ## Getting started
 ### Installation
 1. Clone the repository
