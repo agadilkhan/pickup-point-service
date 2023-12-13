@@ -37,7 +37,7 @@
   ```
 3. To launch the pickup-service:
  ```
-    make pickup-auth
+    make start-pickup
   ```
 
 ## Built With
